@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 export async function load() {
   const dir = await readdir(join(dirname(__filename), 'commands/'));
   const commandsList = await Promise.all(dir
-      .filter((name)=>name.endsWith('.js') && name !== 'example.js')
+      .filter((name)=>name.endsWith('.js') && name !== 'example.js' && !name.startsWith('.'))
       .map(async (mod)=>{
         const imp = await import(join(dirname(__filename), 'commands/', mod));
         return imp.default;

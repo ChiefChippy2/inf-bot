@@ -11,5 +11,9 @@
         "sourceType": "module"
     },
     "rules": {
+      "max-len": ["warn", {
+        "ignoreStrings": true,
+        "code": 120
+        }]
     }
 }

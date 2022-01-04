@@ -10,7 +10,7 @@ const Cli = new Client(process.env.KEY, {
 /**
  * Get stats
  * @param {string} query Query
- * @return {Player}
+ * @return {Promise<Player>}
  */
 export async function getStats(query) {
   return await Cli.getPlayer(query);
@@ -20,8 +20,23 @@ export async function getStats(query) {
 /**
  * Get stats
  * @param {string} query Query
- * @return {Record<string, any>}
+ * @return {Promise<Record<string, any>>}
  */
 export async function getStatsRaw(query) {
   return await Cli.getPlayer(query, {raw: true});
 }
+
+let mapCache = [];
+/**
+ * Gets all maps
+ * @return {Promise<string[]>}
+ */
+export async function getMaps() {
+  if (mapCache.length) return mapCache;
+  const stats = await getStatsRaw('makoeshoi');
+  const maps = Object.keys(stats?.player.stats.MurderMystery).filter((key)=>{
+    return typeof key === 'string' && /^games_.+_MURDER_INFECTION$/.test(key);
+  }).map((key)=>key.replace(/^games_(.+)_MURDER_INFECTION$/, (_, g1)=>g1));
+  mapCache = [...maps];
+  return maps;
+};

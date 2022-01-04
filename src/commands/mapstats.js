@@ -1,12 +1,11 @@
-/* eslint-disable max-len */
 /**
  * @typedef {import('discord.js').CommandInteraction} Interaction
  */
 
-import {MessageEmbed} from 'discord.js';
-import {getStats, getStatsRaw} from '../API/index.js';
+import {getMaps, getStats, getStatsRaw} from '../API/index.js';
 import {formatSnake} from '../utils.js';
 import Har from 'hypixel-api-reborn';
+import {DefaultEmbed, statSelectionRow} from '../constants.js';
 const divide = Har.Utils.divide;
 
 export default {
@@ -28,11 +27,7 @@ export default {
   ],
   'dynamic': true,
   'deploy': async (curObj) =>{
-    const stats = await getStatsRaw('makoeshoi');
-    const maps = Object.keys(stats?.player.stats.MurderMystery).filter((key)=>{
-      return typeof key === 'string' && /^games_.+_MURDER_INFECTION$/.test(key);
-    }).map((key)=>{
-      const finalKey = key.replace(/^games_(.+)_MURDER_INFECTION$/, (x, g1)=>g1);
+    const maps = (await getMaps()).map((finalKey)=>{
       return {
         name: formatSnake(finalKey),
         value: finalKey,
@@ -46,20 +41,42 @@ export default {
   /**
     * handler
     * @param {Interaction} interaction
+    * @param {Function} registerInteractions
     */
-  'handler': async (interaction) => {
+  'handler': async (interaction, registerInteractions) => {
     const suffix = '_MURDER_INFECTION';
     const ign = interaction.options.get('ign').value;
     const map = interaction.options.get('map')?.value;
-    if (!map) {
-      return interaction.reply('You must provide `map` FTM.', {ephemeral: true});
-    }
     const allStats = await getStats(ign);
     const rawStats = await getStatsRaw(ign);
     const formattedIgn = `[${allStats.rank}] ${allStats.nickname}`;
     const stats = rawStats?.player.stats.MurderMystery;
     if (!stats) {
       return interaction.reply('This player has no MM stats', {ephemeral: true});
+    }
+    if (!map) {
+      const mapList = await getMaps();
+      const statsPerMap = mapList.map((name)=>[
+        name,
+        divide(stats['kills_as_infected_'+name+suffix] + stats['kills_as_survivor_'+name+suffix], stats['games_'+name+suffix]),
+      ]).sort((a, b)=>b[1]-a[1]).map(([name, val], i)=>`${i+1}. ${formatSnake(name)}: \`${val}\` kills per game`);
+      const displayFields = [];
+      while (statsPerMap.length > 0) {
+        displayFields.push({
+          name: '\u200B',
+          value: statsPerMap.splice(0, 5).join('\n'),
+        });
+      }
+      const statsEmbed = new DefaultEmbed(interaction.guild.me);
+      statsEmbed
+          .setTitle(`Map overview, stats of ${formattedIgn}`)
+          .addFields(displayFields);
+      const statRow = statSelectionRow();
+      registerInteractions(statRow.id, (intaction)=>intaction.reply({content: '#SoonTM', ephemeral: true}));
+      return interaction.reply({
+        embeds: [statsEmbed],
+        components: [statRow.row],
+      });
     }
     const playedGames = stats['games_'+map+suffix] || 0;
     const wins = stats['wins_'+map+suffix] || 0;
@@ -68,13 +85,9 @@ export default {
     const survKills = stats['kills_as_survivor_'+map+suffix] || 0;
     const deaths = stats['deaths_'+map+suffix] || 0;
     // @TODO : lognest time survived etc
-    const statsEmbed = new MessageEmbed();
+    const statsEmbed = new DefaultEmbed(interaction.guild.me);
     statsEmbed
         .setTitle('Stats')
-        .setFooter({
-          text: `Revealed by your bot, ${interaction.guild.me.displayName}`,
-        })
-        .setTimestamp()
         .addField('Wins', wins.toString(), true)
         .addField('Losses', losses.toString(), true)
         .addField('Total games', playedGames.toString(), true)

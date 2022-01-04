@@ -1,11 +1,10 @@
-/* eslint-disable max-len */
 /**
  * @typedef {import('discord.js').CommandInteraction} Interaction
  */
 
-import {MessageEmbed} from 'discord.js';
 import {getStats, getStatsRaw} from '../API/index.js';
 import Har from 'hypixel-api-reborn';
+import {DefaultEmbed} from '../constants.js';
 const divide = Har.Utils.divide;
 
 export default {
@@ -32,18 +31,15 @@ export default {
     const stats = allStats.stats.murdermystery.infection;
     const losses = stats.playedGames - stats.wins;
     const kills = stats.kills + (rawStats?.player.stats.MurderMystery.kills_as_infected_MURDER_INFECTION || 0);
-    const statsEmbed = new MessageEmbed();
+    const statsEmbed = new DefaultEmbed(interaction.guild.me);
     statsEmbed
         .setTitle('Stats')
-        .setFooter({
-          text: `Revealed by your bot, ${interaction.guild.me.displayName}`,
-        })
-        .setTimestamp()
         .addField('Wins', stats.wins.toString(), true)
         .addField('Losses', losses.toString(), true)
         .addField('Total games', stats.playedGames.toString(), true)
         .addField('Kills (total)', kills.toString(), true)
         .addField('Bow Kills', stats.kills.toString(), true)
+        .addField('Infection Count', (kills-stats.kills).toString(), true)
         .addField('Death', stats.deaths.toString(), true)
         .addField('KDR', stats.KDRatio.toString(), true)
         .addField('WLR', divide(stats.wins, losses).toString(), true)
