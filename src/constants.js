@@ -1,5 +1,7 @@
 import {MessageActionRow, MessageEmbed, MessageSelectMenu} from 'discord.js';
-import {randUUID} from './utils.js';
+import {formatTime, formatNumber, randUUID} from './utils.js';
+import Har from 'hypixel-api-reborn';
+const divide = Har.Utils.divide;
 
 /**
  * @typedef {import('discord.js').GuildMember} GuildMember
@@ -43,6 +45,32 @@ export const stats = [
   'Total survival time',
   'Survival time per game',
 ];
+const suffix = '_MURDER_INFECTION';
+export const statToValue = [
+  (stats, map) => formatNumber(stats['wins_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['games_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['kills_as_survivor_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['kills_as_infected_'+map+suffix] || 0),
+  (stats, map) => formatNumber(stats['deaths_'+map+suffix] || 0),
+  (stats, map) => formatNumber(divide(
+      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
+      stats['deaths_'+map+suffix] || 0,
+  )),
+  (stats, map) => formatNumber(divide(
+      stats['wins_'+map+suffix] || 0,
+      stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
+  )),
+  (stats, map) => formatNumber(divide(
+      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
+      stats['games_'+map+suffix] || 0,
+  )),
+  (stats, map) => formatTime(stats['longest_time_as_survivor_seconds_'+map+suffix] || 0),
+  (stats, map) => formatTime(stats['total_time_survived_seconds_'+map+suffix] || 0),
+  (stats, map) => formatTime(divide(stats['total_time_survived_seconds_'+map+suffix]) || 0, stats['games_'+map+suffix] || 0),
+];
+
 const selMenu = new MessageSelectMenu();
 /**
  * Generates stat selection row

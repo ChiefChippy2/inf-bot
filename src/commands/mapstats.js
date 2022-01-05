@@ -3,9 +3,10 @@
  */
 
 import {getMaps, getStats, getStatsRaw} from '../API/index.js';
-import {formatSnake} from '../utils.js';
+import {formatSnake, formatNumber} from '../utils.js';
 import Har from 'hypixel-api-reborn';
 import {DefaultEmbed, statSelectionRow} from '../constants.js';
+import {generateEmbed} from './.mapoverview.js';
 const divide = Har.Utils.divide;
 
 export default {
@@ -55,24 +56,24 @@ export default {
       return interaction.reply('This player has no MM stats', {ephemeral: true});
     }
     if (!map) {
-      const mapList = await getMaps();
-      const statsPerMap = mapList.map((name)=>[
-        name,
-        divide(stats['kills_as_infected_'+name+suffix] + stats['kills_as_survivor_'+name+suffix], stats['games_'+name+suffix]),
-      ]).sort((a, b)=>b[1]-a[1]).map(([name, val], i)=>`${i+1}. ${formatSnake(name)}: \`${val}\` kills per game`);
-      const displayFields = [];
-      while (statsPerMap.length > 0) {
-        displayFields.push({
-          name: '\u200B',
-          value: statsPerMap.splice(0, 5).join('\n'),
-        });
-      }
-      const statsEmbed = new DefaultEmbed(interaction.guild.me);
-      statsEmbed
-          .setTitle(`Map overview, stats of ${formattedIgn}`)
-          .addFields(displayFields);
+      const statsEmbed = await generateEmbed(interaction, formattedIgn, stats);
       const statRow = statSelectionRow();
-      registerInteractions(statRow.id, (intaction)=>intaction.reply({content: '#SoonTM', ephemeral: true}));
+      const selectionHandler = async (interaction, intaction)=>{
+        if (intaction.user.id === interaction.user.id) {
+          await intaction.deferUpdate();
+          return await interaction.editReply({
+            embeds: [await generateEmbed(interaction, formattedIgn, stats, intaction?.values?.[0])],
+            components: [statRow.row],
+          });
+        };
+        const newStatRow = statSelectionRow();
+        registerInteractions(newStatRow.id, selectionHandler.bind(null, intaction));
+        return await intaction.reply({
+          embeds: [await generateEmbed(interaction, formattedIgn, stats, intaction?.values?.[0])],
+          components: [newStatRow.row],
+        });
+      };
+      registerInteractions(statRow.id, selectionHandler.bind(null, interaction));
       return interaction.reply({
         embeds: [statsEmbed],
         components: [statRow.row],
@@ -88,16 +89,16 @@ export default {
     const statsEmbed = new DefaultEmbed(interaction.guild.me);
     statsEmbed
         .setTitle('Stats')
-        .addField('Wins', wins.toString(), true)
-        .addField('Losses', losses.toString(), true)
-        .addField('Total games', playedGames.toString(), true)
-        .addField('Kills (total)', (infKills + survKills).toString(), true)
-        .addField('Bow Kills', survKills.toString(), true)
-        .addField('Infection Count', infKills.toString(), true)
-        .addField('Death', deaths.toString(), true)
-        .addField('KDR', divide(infKills+survKills, deaths).toString(), true)
-        .addField('WLR', divide(wins, losses).toString(), true)
-        .addField('Kills per game (avg.)', divide(infKills + survKills, playedGames).toString(), true)
+        .addField('Wins', formatNumber(wins), true)
+        .addField('Losses', formatNumber(losses), true)
+        .addField('Total games', formatNumber(playedGames), true)
+        .addField('Kills (total)', formatNumber(infKills + survKills), true)
+        .addField('Bow Kills', formatNumber(survKills), true)
+        .addField('Infection Count', formatNumber(infKills), true)
+        .addField('Death', formatNumber(deaths), true)
+        .addField('KDR', formatNumber(divide(infKills+survKills, deaths)), true)
+        .addField('WLR', formatNumber(divide(wins, losses)), true)
+        .addField('Kills per game (avg.)', formatNumber(divide(infKills + survKills, playedGames)), true)
         .addField('Generation time', `${new Date().getTime() - interaction.createdTimestamp}ms`, true);
     await interaction.reply({
       'content': `Here are the stats of ${formattedIgn}`,
