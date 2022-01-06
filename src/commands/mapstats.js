@@ -3,11 +3,9 @@
  */
 
 import {getMaps, getStats, getStatsRaw} from '../API/index.js';
-import {formatSnake, formatNumber} from '../utils.js';
-import Har from 'hypixel-api-reborn';
-import {DefaultEmbed, statSelectionRow} from '../constants.js';
-import {generateEmbed} from './.mapoverview.js';
-const divide = Har.Utils.divide;
+import {formatSnake, formatNumber, formatTime} from '../utils.js';
+import {DefaultEmbed, statSelectionRow, statToValue, stats as statCol} from '../constants.js';
+import {generateEmbed} from './_mapoverview.js';
 
 export default {
   'name': 'mapstats',
@@ -45,7 +43,6 @@ export default {
     * @param {Function} registerInteractions
     */
   'handler': async (interaction, registerInteractions) => {
-    const suffix = '_MURDER_INFECTION';
     const ign = interaction.options.get('ign').value;
     const map = interaction.options.get('map')?.value;
     const allStats = await getStats(ign);
@@ -79,27 +76,20 @@ export default {
         components: [statRow.row],
       });
     }
-    const playedGames = stats['games_'+map+suffix] || 0;
-    const wins = stats['wins_'+map+suffix] || 0;
-    const losses = playedGames - wins;
-    const infKills = stats['kills_as_infected_'+map+suffix] || 0;
-    const survKills = stats['kills_as_survivor_'+map+suffix] || 0;
-    const deaths = stats['deaths_'+map+suffix] || 0;
-    // @TODO : lognest time survived etc
+
+    const fields = statToValue.map((val, index)=>{
+      const type = statCol[index].includes('time') ? formatTime : formatNumber;
+      return {
+        name: statCol[index],
+        value: type(val(stats, map)),
+        inline: true,
+      };
+    });
+
     const statsEmbed = new DefaultEmbed(interaction.guild.me);
     statsEmbed
         .setTitle('Stats')
-        .addField('Wins', formatNumber(wins), true)
-        .addField('Losses', formatNumber(losses), true)
-        .addField('Total games', formatNumber(playedGames), true)
-        .addField('Kills (total)', formatNumber(infKills + survKills), true)
-        .addField('Bow Kills', formatNumber(survKills), true)
-        .addField('Infection Count', formatNumber(infKills), true)
-        .addField('Death', formatNumber(deaths), true)
-        .addField('KDR', formatNumber(divide(infKills+survKills, deaths)), true)
-        .addField('WLR', formatNumber(divide(wins, losses)), true)
-        .addField('Kills per game (avg.)', formatNumber(divide(infKills + survKills, playedGames)), true)
-        .addField('Generation time', `${new Date().getTime() - interaction.createdTimestamp}ms`, true);
+        .addFields(fields);
     await interaction.reply({
       'content': `Here are the stats of ${formattedIgn}`,
       'embeds': [statsEmbed],

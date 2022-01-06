@@ -36,7 +36,7 @@ export async function getMaps() {
   const stats = await getStatsRaw('makoeshoi');
   const maps = Object.keys(stats?.player.stats.MurderMystery).filter((key)=>{
     return typeof key === 'string' && /^games_.+_MURDER_INFECTION$/.test(key);
-  }).map((key)=>key.replace(/^games_(.+)_MURDER_INFECTION$/, (_, g1)=>g1));
+  }).map((key)=>key.replace(/^games_(.+)_MURDER_INFECTION$/, (_, g1)=>g1)).sort();
   mapCache = [...maps];
   return maps;
 };

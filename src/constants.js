@@ -1,5 +1,5 @@
 import {MessageActionRow, MessageEmbed, MessageSelectMenu} from 'discord.js';
-import {formatTime, formatNumber, randUUID} from './utils.js';
+import {randUUID} from './utils.js';
 import Har from 'hypixel-api-reborn';
 const divide = Har.Utils.divide;
 
@@ -37,38 +37,54 @@ export const stats = [
   'Kills (total)',
   'Bow Kills',
   'Infection Count',
-  'Death',
+  'Deaths',
+  'Trap Kills',
+  'Trap Kills per 1k games',
   'KDR',
   'WLR',
   'Kills per game',
-  'Longest survival time',
+  'Infection per bow kill',
+  'Coins picked up',
+  'Coins per game',
   'Total survival time',
+  'Longest survival time',
   'Survival time per game',
 ];
 const suffix = '_MURDER_INFECTION';
 export const statToValue = [
-  (stats, map) => formatNumber(stats['wins_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['games_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['kills_as_survivor_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['kills_as_infected_'+map+suffix] || 0),
-  (stats, map) => formatNumber(stats['deaths_'+map+suffix] || 0),
-  (stats, map) => formatNumber(divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
+  (stats, map) => stats['wins_'+map+suffix] || 0,
+  (stats, map) => stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
+  (stats, map) => stats['games_'+map+suffix] || 0,
+  (stats, map) => stats['kills_as_infected_'+map+suffix] + stats['kills_'+map+suffix] || 0,
+  (stats, map) => stats['kills_as_survivor_'+map+suffix] || 0,
+  (stats, map) => stats['kills_as_infected_'+map+suffix] || 0,
+  (stats, map) => stats['deaths_'+map+suffix] || 0,
+  (stats, map) => stats['trap_kills_'+map+suffix] || 0,
+  (stats, map) => divide((stats['trap_kills_'+map+suffix] || 0) * 1e3, stats['games_'+map+suffix] || 0),
+  (stats, map) => divide(
+      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] + stats['kills_'+map+suffix] || 0,
       stats['deaths_'+map+suffix] || 0,
-  )),
-  (stats, map) => formatNumber(divide(
+  ),
+  (stats, map) => divide(
       stats['wins_'+map+suffix] || 0,
       stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
-  )),
-  (stats, map) => formatNumber(divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
+  ),
+  (stats, map) => divide(
+      stats['kills_as_infected_'+map+suffix] + stats['kills_'+map+suffix] || 0,
       stats['games_'+map+suffix] || 0,
-  )),
-  (stats, map) => formatTime(stats['longest_time_as_survivor_seconds_'+map+suffix] || 0),
-  (stats, map) => formatTime(stats['total_time_survived_seconds_'+map+suffix] || 0),
-  (stats, map) => formatTime(divide(stats['total_time_survived_seconds_'+map+suffix]) || 0, stats['games_'+map+suffix] || 0),
+  ),
+  (stats, map) => divide(
+      stats['kills_as_infected_'+map+suffix] || 0,
+      stats['kills_as_survivor_'+map+suffix] || 0,
+  ),
+  (stats, map) => stats['coins_pickedup_'+map+suffix] || 0,
+  (stats, map) => divide(
+      stats['coins_pickedup_'+map+suffix] || 0,
+      stats['games_'+map+suffix] || 0,
+  ),
+  (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)) * (stats['games_'+map+suffix] || 0),
+  (stats, map) => stats['longest_time_as_survivor_seconds_'+map+suffix] || 0,
+  (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)),
 ];
 
 const selMenu = new MessageSelectMenu();

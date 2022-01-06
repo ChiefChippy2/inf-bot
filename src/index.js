@@ -52,6 +52,7 @@ client.on('interactionCreate', async (interaction) => {
   if (!cmd[interaction.commandName]) return await interaction.reply('This command isn\'t registered on our side!').catch(console.log);
   console.log(`[${new Date().toISOString()}]: ${interaction.user.username} did ${interaction.commandName}`);
   try {
+    // await interaction.deferReply();
     await cmd[interaction.commandName]?.handler?.(interaction, interactionRegistry);
   } catch (e) {
     if (e.message === Errors.PLAYER_DOES_NOT_EXIST) {
