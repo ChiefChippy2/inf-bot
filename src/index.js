@@ -34,7 +34,8 @@ client.on('interactionCreate', async (interaction) => {
   // Similarly, DEV shouldn't respond to other global cmds
   if (process.env.ENV === 'DEV' && interaction.guildId !== process.env.GUILD_ID) return;
   if (interaction.customId) {
-    if (!interactionRegister[interaction.customId]) {
+    // Only say expired on production
+    if (!interactionRegister[interaction.customId] && process.env.ENV === 'PROD') {
       return await interaction.reply({
         content: 'Interaction expired, use the command again.',
         ephemeral: true,
@@ -54,8 +55,9 @@ client.on('interactionCreate', async (interaction) => {
 
   if (!interaction.isCommand()) return;
   // Handle test commands
-  if (process.env.ENV === 'DEV') interaction.commandName = interaction.commandName.replace(/^test4/, '');
   if (interaction.commandName.startsWith('test4') && process.env.ENV === 'PROD') return; // Don't handle Test cmds on prod
+  if (!interaction.commandName.startsWith('test4') && process.env.ENV === 'DEV') return; // Don't handle global cmds on test
+  if (process.env.ENV === 'DEV') interaction.commandName = interaction.commandName.replace(/^test4/, '');
   if (!cmd[interaction.commandName]) return await interaction.reply('This command isn\'t registered on our side!').catch(console.log);
   console.log(`[${new Date().toISOString()}]: ${interaction.user.username} did ${interaction.commandName}`);
   try {
