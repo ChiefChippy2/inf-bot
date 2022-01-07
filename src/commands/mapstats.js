@@ -86,7 +86,7 @@ export default {
       };
     });
 
-    const statsEmbed = new DefaultEmbed(interaction.guild.me);
+    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.username);
     statsEmbed
         .setTitle('Stats')
         .addFields(fields);

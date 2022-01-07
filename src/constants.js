@@ -26,7 +26,8 @@ export class DefaultEmbed extends MessageEmbed {
         .setTimestamp()
         .setFooter({
           text: `Revealed by your bot, ${bot.displayName} | Stats cached for 2 minutes`,
-        });
+        })
+        .setDescription('If a stat is 0, it can either mean the API doesn\'t provide the value OR the stat is actually 0.');
   }
 }
 
@@ -34,18 +35,27 @@ export const stats = [
   'Wins',
   'Losses',
   'Total games',
+
   'Kills (total)',
   'Bow Kills',
   'Infection Count',
-  'Deaths',
+
   'Trap Kills',
-  'Trap Kills per 1k games',
-  'KDR',
+  'Final Bow Kills',
+  'Deaths',
+
   'WLR',
+  'KDR',
+  'FKDR',
+
   'Kills per game',
+  'Final Bow Kills per game',
+  'Last one alive count',
+
   'Infection per bow kill',
   'Coins picked up',
   'Coins per game',
+
   'Total survival time',
   'Longest survival time',
   'Survival time per game',
@@ -55,24 +65,39 @@ export const statToValue = [
   (stats, map) => stats['wins_'+map+suffix] || 0,
   (stats, map) => stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
   (stats, map) => stats['games_'+map+suffix] || 0,
-  (stats, map) => stats['kills_as_infected_'+map+suffix] + stats['kills_'+map+suffix] || 0,
+
+  // Total kills : Infected + Survivor
+  (stats, map) => stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
   (stats, map) => stats['kills_as_survivor_'+map+suffix] || 0,
   (stats, map) => stats['kills_as_infected_'+map+suffix] || 0,
-  (stats, map) => stats['deaths_'+map+suffix] || 0,
+
   (stats, map) => stats['trap_kills_'+map+suffix] || 0,
-  (stats, map) => divide((stats['trap_kills_'+map+suffix] || 0) * 1e3, stats['games_'+map+suffix] || 0),
+  (stats, map) => stats['bow_kills_'+map+suffix] || 0,
+  (stats, map) => stats['deaths_'+map+suffix] || 0,
+
   (stats, map) => divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] + stats['kills_'+map+suffix] || 0,
+      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
       stats['deaths_'+map+suffix] || 0,
   ),
+  (stats, map) => divide(
+      stats['bow_kills_'+map+suffix] || 0,
+      stats['deaths_'+map+suffix] || 0,
+  ),
+  (stats, map) => divide(
+      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
+      stats['games_'+map+suffix] || 0,
+  ),
+
   (stats, map) => divide(
       stats['wins_'+map+suffix] || 0,
       stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
   ),
   (stats, map) => divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_'+map+suffix] || 0,
+      stats['bow_kills_'+map+suffix] || 0,
       stats['games_'+map+suffix] || 0,
   ),
+  (stats, map) => stats['last_one_alive_'+map+suffix] || 0,
+
   (stats, map) => divide(
       stats['kills_as_infected_'+map+suffix] || 0,
       stats['kills_as_survivor_'+map+suffix] || 0,
@@ -82,6 +107,7 @@ export const statToValue = [
       stats['coins_pickedup_'+map+suffix] || 0,
       stats['games_'+map+suffix] || 0,
   ),
+
   (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)) * (stats['games_'+map+suffix] || 0),
   (stats, map) => stats['longest_time_as_survivor_seconds_'+map+suffix] || 0,
   (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)),
