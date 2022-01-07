@@ -32,7 +32,8 @@ export default {
     const stats = allStats.stats.murdermystery.infection;
     const rstats = rawStats?.player.stats.MurderMystery || {};
     const losses = stats.playedGames - stats.wins;
-    const kills = (rstats.kills_as_infected_MURDER_INFECTION || 0) + (rstats.kills_MURDER_INFECTION || 0);
+    const survKills = rstats.kills_as_survivor_MURDER_INFECTION || 0;
+    const kills = (rstats.kills_as_infected_MURDER_INFECTION || 0) + survKills;
     const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0);
     const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0);
     const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
@@ -44,7 +45,7 @@ export default {
         .addField('Total games', formatNumber(stats.playedGames), true)
 
         .addField('Kills (total)', formatNumber(kills), true)
-        .addField('Bow Kills', formatNumber(stats.kills), true)
+        .addField('Bow Kills', formatNumber(survKills), true)
         .addField('Infection Count', formatNumber(rstats.kills_as_infected_MURDER_INFECTION || 0), true)
 
         .addField('Trap Kills', formatNumber(rstats.trap_kills_MURDER_INFECTION || 0), true)
@@ -59,7 +60,7 @@ export default {
         .addField('Final Bow Kills per game', formatNumber(divide(rstats.bow_kills_MURDER_INFECTION, stats.playedGames)), true)
         .addField('Last one alive count', formatNumber(rstats.last_one_alive_MURDER_INFECTION || 0), true)
 
-        .addField('Bow kill to Infection ratio', stats.kills > 0 ? `1:${divide(kills - stats.kills, stats.kills)}` : 'N/A', true)
+        .addField('Bow kill to Infection ratio', survKills > 0 ? `1:${divide(survKills, rstats.kills_as_infected_MURDER_INFECTION || 0)}` : 'N/A', true)
         .addField('Coins picked up', formatNumber(coins), true)
         .addField('Coins per game', formatNumber(divide(coins, stats.playedGames)), true)
 
