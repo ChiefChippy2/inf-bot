@@ -60,7 +60,7 @@ export default {
         .addField('Final Bow Kills per game', formatNumber(divide(rstats.bow_kills_MURDER_INFECTION, stats.playedGames)), true)
         .addField('Last one alive count', formatNumber(rstats.last_one_alive_MURDER_INFECTION || 0), true)
 
-        .addField('Bow kill to Infection ratio', survKills > 0 ? `1:${divide(survKills, rstats.kills_as_infected_MURDER_INFECTION || 0)}` : 'N/A', true)
+        .addField('Bow kill to Infection ratio', survKills > 0 ? `1:${divide(rstats.kills_as_infected_MURDER_INFECTION || 0, survKills)}` : 'N/A', true)
         .addField('Coins picked up', formatNumber(coins), true)
         .addField('Coins per game', formatNumber(divide(coins, stats.playedGames)), true)
 
