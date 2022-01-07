@@ -16,7 +16,7 @@ console.log('Deploying to production... (3s)');
 await wait(3000);
 console.log('Deploying...');
 
-const commands = Promise.all((await load()).map(async (x)=>{
+const commands = await Promise.all((await load()).map(async (x)=>{
   delete x.handler;
   return x.dynamic ? await x.deploy(x) : x;
 }));

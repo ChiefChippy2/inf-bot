@@ -17,6 +17,8 @@ if (!CLIENT_ID || !GUILD_ID) {
 
 const commands = await Promise.all((await load()).map(async (x)=>{
   delete x.handler;
+  x.name = 'test4'+x.name;
+  x.description = '[TEST]' + x.description;
   return x.dynamic ? await x.deploy(x) : x;
 }));
 console.log(commands);
@@ -26,7 +28,6 @@ const rest = new REST({version: '9'}).setToken(TOKEN);
 (async () => {
   try {
     console.log('Started refreshing application (/) commands.');
-
     await rest.put(
         Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
         {body: commands},
