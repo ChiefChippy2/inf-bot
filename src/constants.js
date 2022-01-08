@@ -76,6 +76,10 @@ export const statToValue = [
   (stats, map) => stats['deaths_'+map+suffix] || 0,
 
   (stats, map) => divide(
+      stats['wins_'+map+suffix] || 0,
+      stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
+  ),
+  (stats, map) => divide(
       stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
       stats['deaths_'+map+suffix] || 0,
   ),
@@ -83,14 +87,10 @@ export const statToValue = [
       stats['bow_kills_'+map+suffix] || 0,
       stats['deaths_'+map+suffix] || 0,
   ),
+
   (stats, map) => divide(
       stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
       stats['games_'+map+suffix] || 0,
-  ),
-
-  (stats, map) => divide(
-      stats['wins_'+map+suffix] || 0,
-      stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
   ),
   (stats, map) => divide(
       stats['bow_kills_'+map+suffix] || 0,
