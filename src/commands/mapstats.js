@@ -57,8 +57,7 @@ export default {
       const statRow = statSelectionRow();
       const selectionHandler = async (interaction, intaction)=>{
         if (intaction.user.id === interaction.user.id) {
-          await intaction.deferUpdate();
-          return await interaction.editReply({
+          return await intaction.update({
             embeds: [await generateEmbed(interaction, formattedIgn, stats, intaction?.values?.[0])],
             components: [statRow.row],
           });
@@ -86,7 +85,7 @@ export default {
       };
     });
 
-    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.username);
+    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
     statsEmbed
         .setTitle('Stats')
         .addFields(fields);

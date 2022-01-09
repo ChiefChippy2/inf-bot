@@ -5,6 +5,7 @@ const divide = Har.Utils.divide;
 
 /**
  * @typedef {import('discord.js').GuildMember} GuildMember
+ * @typedef {import('discord.js').ClientUser} ClientUser
  * @typedef {Object} StatRow
  * @property {MessageActionRow} row
  * @property {string} id
@@ -16,7 +17,7 @@ const divide = Har.Utils.divide;
 export class DefaultEmbed extends MessageEmbed {
   /**
    * Constructor
-   * @param {GuildMember} bot Bot
+   * @param {GuildMember|ClientUser} bot Bot
    * @param {...any} args args
    */
   constructor(bot, ...args) {
@@ -25,7 +26,7 @@ export class DefaultEmbed extends MessageEmbed {
         .setColor('GOLD')
         .setTimestamp()
         .setFooter({
-          text: `Revealed by your bot, ${bot.displayName} | Stats cached for 2 minutes`,
+          text: `Revealed by your bot, ${bot?.displayName || bot.username} | Stats cached for 2 minutes`,
         })
         .setDescription('If a stat is 0, it can either mean the API doesn\'t provide the value OR the stat is actually 0.');
   }

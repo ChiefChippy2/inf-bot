@@ -30,7 +30,7 @@ export async function generateEmbed(interaction, formattedIgn, stats, statColumn
       value: statsPerMap.splice(0, 5).join('\n'),
     });
   }
-  const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.username);
+  const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
   statsEmbed
       .setTitle(`Map overview, stats of ${formattedIgn}`)
       .addFields(displayFields);

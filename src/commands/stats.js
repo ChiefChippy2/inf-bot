@@ -37,7 +37,7 @@ export default {
     const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0);
     const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0);
     const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
-    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.username);
+    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
     statsEmbed
         .setTitle('Stats')
         .addField('Wins', formatNumber(stats.wins), true)
