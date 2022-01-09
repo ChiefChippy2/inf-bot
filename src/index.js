@@ -19,12 +19,22 @@ const interactionRegister = {};
  * @param {number} [expire=600] Expiration in seconds
  */
 function interactionRegistry(id, handler, expire=600) {
-  interactionRegister[id] = {run: handler, expire};
+  interactionRegister[id] = {run: handler, expire: expire+Date.now()};
+}
+
+/**
+ * Cleans registry
+ */
+function cleanRegistry() {
+  for (const [key, {expire}] in interactionRegister) {
+    if (expire <= Date.now()) delete interactionRegister[key];
+  }
 }
 
 client.on('ready', () => {
   debug();
   setInterval(debug, 1000*60*5);
+  setInterval(cleanRegistry, 1000*30);
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
