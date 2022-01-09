@@ -33,7 +33,7 @@ export default {
    * handler
    * @param {Interaction} interaction
    */
-  'handler': (interaction) => {
+  'handler': async (interaction) => {
     // Code here...
   },
 };
