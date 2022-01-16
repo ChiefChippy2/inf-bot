@@ -14,7 +14,9 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
-    "hypixel-api-reborn": "github:Hypixel-api-reborn/hypixel-api-reborn"
+    "hypixel-api-reborn": "github:Hypixel-api-reborn/hypixel-api-reborn",
+    "jsdom": "^19.0.0",
+    "node-fetch": "^3.1.1"
   },
   "devDependencies": {
     "eslint": "^8.6.0",

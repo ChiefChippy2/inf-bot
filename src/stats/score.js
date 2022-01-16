@@ -19,15 +19,19 @@ export function calcScore(stats, map) {
   const kills = getStatFunc('Kills (total)')(stats, map);
 
   /* Score is calculated as followed:
-  KDR will be added after square root
-  WLR will be added
+  KDR will be added after square root, cap at 5
+  WLR will be added, cap at 10
   KPG will be added after being squared
   LOAC will be added after log2
   FBKG will be a multiplier after adding 1 to it, cap at 4 (after addition)
   FKDR will be a multiplier after square root, cap at 5
   -------
-  After ratio manipulation, some participation award!
-  Final Score = skillScore + log2(games+1) / 2
+  After ratio manipulation, some participation award! (grindScore)
+
+  Games : log2(games+1)
+  Kills : log2(kills + 1) * 2
+  -------
+  Final Score = skillScore * multipliers + grindScore
   */
 
   const skillScore = Math.min(KDR ** 0.5, 5) + Math.min(WLR, 10) + KPG ** 2 + Math.log2(LOAC);

@@ -6,6 +6,7 @@ import {getStats, getStatsRaw} from '../API/index.js';
 import Har from 'hypixel-api-reborn';
 import {DefaultEmbed} from '../constants.js';
 import {formatTime, formatNumber, fixTime} from '../utils.js';
+import {lb} from '../stats/leaderboard.js';
 const divide = Har.Utils.divide;
 
 export default {
@@ -37,16 +38,25 @@ export default {
     const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0);
     const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0);
     const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
+
+    // lb shenanigans :
+    const lbData = await lb.getLB();
+    const SKSpot = lbData.survivorKills.findIndex((x)=>x.ign === allStats.nickname);
+    const SKAddon = SKSpot > -1 ? ` (#${SKSpot+1} All time*)` : '';
+    const IKSpot = lbData.infectedKills.findIndex((x)=>x.ign === allStats.nickname);
+    const IKAddon = SKSpot > -1 ? ` (#${IKSpot+1} All time)` : '';
+
     const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
     statsEmbed
         .setTitle('Stats')
+
         .addField('Wins', formatNumber(stats.wins), true)
         .addField('Losses', formatNumber(losses), true)
         .addField('Total games', formatNumber(stats.playedGames), true)
 
         .addField('Kills (total)', formatNumber(kills), true)
-        .addField('Bow Kills', formatNumber(survKills), true)
-        .addField('Infection Count', formatNumber(rstats.kills_as_infected_MURDER_INFECTION || 0), true)
+        .addField('Bow Kills', formatNumber(survKills) + SKAddon, true)
+        .addField('Infection Count', formatNumber(rstats.kills_as_infected_MURDER_INFECTION || 0) + IKAddon, true)
 
         .addField('Trap Kills', formatNumber(rstats.trap_kills_MURDER_INFECTION || 0), true)
         .addField('Final Bow Kills', formatNumber(rstats.bow_kills_MURDER_INFECTION || 0), true)
@@ -66,7 +76,9 @@ export default {
 
         .addField('Total survived time', formatTime(lst), true)
         .addField('Longest survived time', formatTime(bst), true)
-        .addField('Average survival time', formatTime(divide(lst, stats.playedGames)), true);
+        .addField('Average survival time', formatTime(divide(lst, stats.playedGames)), true)
+
+        .addField('\u200B', '* - Survivor kills might be very inaccurate, please take with a grain of salt');
     await interaction.reply({
       'content': `Here are the stats of ${formattedIgn}`,
       'embeds': [statsEmbed],
