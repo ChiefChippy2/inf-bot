@@ -20,7 +20,7 @@ export async function generateEmbed(interaction, formattedIgn, stats, statColumn
   const statsPerMap = mapList
       .map((name)=>[
         name,
-        statToValue[constantStats.indexOf(statColumn)](stats, name),
+        statToValue[constantStats.indexOf(statColumn)](stats, '_'+name),
       ]).sort((a, b)=>b[1]-a[1])
       .map(([name, val], i)=>`${i+1}. ${formatSnake(name)}: \`${formatType(val)}\` ${statColumn}`);
   const displayFields = [];

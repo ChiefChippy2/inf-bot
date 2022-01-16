@@ -52,7 +52,7 @@ export default {
     const params = new URLSearchParams();
     const statFunc = statToValue[statCol.indexOf(crit)];
     const maps = await getMaps();
-    const mapStats = maps.map((map)=>statFunc(stats.player.stats.MurderMystery, map));
+    const mapStats = maps.map((map)=>statFunc(stats.player.stats.MurderMystery, '_'+map));
     params.append('cht', 'r'); // Radar chart
     params.append('chtt', `${crit}`); // Title
     params.append('chts', `1FADED,28`); // Title Styling
@@ -70,7 +70,7 @@ export default {
     if (ign2) {
       const p2stats = await getStatsRaw(ign2);
       const p2Ign = p2stats.player.displayname;
-      const p2mapStats = maps.map((map)=>statFunc(p2stats.player.stats.MurderMystery, map));
+      const p2mapStats = maps.map((map)=>statFunc(p2stats.player.stats.MurderMystery, '_'+map));
       const finalMaxVal = Math.max(...p2mapStats, maxVal);
       const mapStatsPercent1 = mapStats.map((num)=>num * 100 / finalMaxVal);
       mapStatsPercent1.push(mapStatsPercent1[0]);

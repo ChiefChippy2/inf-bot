@@ -1,7 +1,7 @@
 /**
  * Wait
  * @param {number} timeout Timeout in ms
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function wait(timeout) {
   return await new Promise((resolve)=>setTimeout(resolve, timeout));

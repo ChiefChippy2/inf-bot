@@ -9,7 +9,7 @@ const HyUtils = Har.Utils;
  */
 
 export default {
-  'name': 'whois',
+  'name': 'who',
   'description': 'Looks up a player by IGN or UUID and gives name history',
   'options': [
     {

@@ -9,7 +9,19 @@ config();
 
 const cmd = parse(await load());
 
-const client = new Client({intents: [Intents.FLAGS.GUILDS]});
+const client = new Client({intents: [Intents.FLAGS.GUILDS], presence: {
+  activities: [
+    {
+      name: 'Infection Stats',
+      type: 'STREAMING',
+      url: 'https://not.a.url',
+    },
+    {
+      name: 'Infection',
+      type: 'PLAYING',
+    },
+  ],
+}});
 const interactionRegister = {};
 
 /**

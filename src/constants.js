@@ -10,6 +10,12 @@ const divide = Har.Utils.divide;
  * @property {MessageActionRow} row
  * @property {string} id
  */
+/**
+ * @callback StatFunc Stat Function
+ * @param {Record<string, number|null>} stats Stats
+ * @param {string} [map=''] map
+ * @returns {number}
+ */
 
 /**
  * Default Embed
@@ -62,57 +68,69 @@ export const stats = [
   'Survival time per game',
 ];
 const suffix = '_MURDER_INFECTION';
+
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @type {StatFunc[]}
+ */
 export const statToValue = [
-  (stats, map) => stats['wins_'+map+suffix] || 0,
-  (stats, map) => stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
-  (stats, map) => stats['games_'+map+suffix] || 0,
+  (stats, map = '') => stats['wins'+map+suffix] || 0,
+  (stats, map = '') => stats['games'+map+suffix] - stats['wins'+map+suffix] || 0,
+  (stats, map = '') => stats['games'+map+suffix] || 0,
 
   // Total kills : Infected + Survivor
-  (stats, map) => stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
-  (stats, map) => stats['kills_as_survivor_'+map+suffix] || 0,
-  (stats, map) => stats['kills_as_infected_'+map+suffix] || 0,
+  (stats, map = '') => stats['kills_as_infected'+map+suffix] + stats['kills_as_survivor'+map+suffix] || 0,
+  (stats, map = '') => stats['kills_as_survivor'+map+suffix] || 0,
+  (stats, map = '') => stats['kills_as_infected'+map+suffix] || 0,
 
-  (stats, map) => stats['trap_kills_'+map+suffix] || 0,
-  (stats, map) => stats['bow_kills_'+map+suffix] || 0,
-  (stats, map) => stats['deaths_'+map+suffix] || 0,
+  (stats, map = '') => stats['trap_kills'+map+suffix] || 0,
+  (stats, map = '') => stats['bow_kills'+map+suffix] || 0,
+  (stats, map = '') => stats['deaths'+map+suffix] || 0,
 
-  (stats, map) => divide(
-      stats['wins_'+map+suffix] || 0,
-      stats['games_'+map+suffix] - stats['wins_'+map+suffix] || 0,
+  (stats, map = '') => divide(
+      stats['wins'+map+suffix] || 0,
+      stats['games'+map+suffix] - stats['wins'+map+suffix] || 0,
   ),
-  (stats, map) => divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
-      stats['deaths_'+map+suffix] || 0,
+  (stats, map = '') => divide(
+      stats['kills_as_infected'+map+suffix] + stats['kills_as_survivor'+map+suffix] || 0,
+      stats['deaths'+map+suffix] || 0,
   ),
-  (stats, map) => divide(
-      stats['bow_kills_'+map+suffix] || 0,
-      stats['deaths_'+map+suffix] || 0,
-  ),
-
-  (stats, map) => divide(
-      stats['kills_as_infected_'+map+suffix] + stats['kills_as_survivor_'+map+suffix] || 0,
-      stats['games_'+map+suffix] || 0,
-  ),
-  (stats, map) => divide(
-      stats['bow_kills_'+map+suffix] || 0,
-      stats['games_'+map+suffix] || 0,
-  ),
-  (stats, map) => stats['last_one_alive_'+map+suffix] || 0,
-
-  (stats, map) => divide(
-      stats['kills_as_infected_'+map+suffix] || 0,
-      stats['kills_as_survivor_'+map+suffix] || 0,
-  ),
-  (stats, map) => stats['coins_pickedup_'+map+suffix] || 0,
-  (stats, map) => divide(
-      stats['coins_pickedup_'+map+suffix] || 0,
-      stats['games_'+map+suffix] || 0,
+  (stats, map = '') => divide(
+      stats['bow_kills'+map+suffix] || 0,
+      stats['deaths'+map+suffix] || 0,
   ),
 
-  (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)) * (stats['games_'+map+suffix] || 0),
-  (stats, map) => stats['longest_time_as_survivor_seconds_'+map+suffix] || 0,
-  (stats, map) => Math.round(divide(stats['total_time_survived_seconds_'+map+suffix] || 0, stats['games'+suffix] || 0)),
+  (stats, map = '') => divide(
+      stats['kills_as_infected'+map+suffix] + stats['kills_as_survivor'+map+suffix] || 0,
+      stats['games'+map+suffix] || 0,
+  ),
+  (stats, map = '') => divide(
+      stats['bow_kills'+map+suffix] || 0,
+      stats['games'+map+suffix] || 0,
+  ),
+  (stats, map = '') => stats['last_one_alive'+map+suffix] || 0,
+
+  (stats, map = '') => divide(
+      stats['kills_as_infected'+map+suffix] || 0,
+      stats['kills_as_survivor'+map+suffix] || 0,
+  ),
+  (stats, map = '') => stats['coins_pickedup'+map+suffix] || 0,
+  (stats, map = '') => divide(
+      stats['coins_pickedup'+map+suffix] || 0,
+      stats['games'+map+suffix] || 0,
+  ),
+
+  (stats, map = '') => Math.round(divide(stats['total_time_survived_seconds'+map+suffix] || 0, stats['games'+suffix] || 0)) * (stats['games'+map+suffix] || 0),
+  (stats, map = '') => stats['longest_time_as_survivor_seconds'+map+suffix] || 0,
+  (stats, map = '') => Math.round(divide(stats['total_time_survived_seconds'+map+suffix] || 0, stats['games'+suffix] || 0)),
 ];
+
+/**
+ * Gets Stat Func
+ * @param {string} name Name of stat
+ * @return {StatFunc|null}
+ */
+export const getStatFunc = (name) => statToValue[stats.indexOf(name)];
 
 const selMenu = new MessageSelectMenu();
 /**

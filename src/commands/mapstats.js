@@ -80,7 +80,7 @@ export default {
       const type = statCol[index].includes('time') ? formatTime : formatNumber;
       return {
         name: statCol[index],
-        value: type(val(stats, map)),
+        value: type(val(stats, '_'+map)),
         inline: true,
       };
     });
