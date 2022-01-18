@@ -33,17 +33,19 @@ export default {
       return await interaction.reply('IGN incorrect');
     }
     const ign = await HyUtils.toIGN(uuid);
-    const imgUrl = `https://crafatar.com/renders/body/${uuid}?overlay=true`;
+    const imgUrl = `https://visage.surgeplay.com/full/512/${uuid}.png?tilt=0`;
     const player = await getStats(uuid);
+    const sm = player.socialMedia;
     const embed = new DefaultEmbed(interaction.guild?.me || interaction.client.user)
         .setImage(imgUrl)
         .addField('IGN', ign)
         .addField('UUID', `\`${uuid}\``)
         .addField('Status', player.isOnline ? `Online, playing ${player.recentlyPlayedGame?.name || 'Unknown'}`: 'Offline')
-        .addField('Social Media', player.socialMedia.map((sm)=>`${sm.name} : ${sm.link}`).join('\n'))
-        .setDescription('Skin from [Crafatar](https://crafatar.com/)');
+        .addField('Social Media', sm.map((sm)=>`${sm.name} : ${sm.link}`).join('\n'))
+        .setDescription('Skin from [Surgeplay](https://visage.surgeplay.com/)');
     const row = new MessageActionRow().addComponents(
         new MessageButton().setStyle('LINK').setLabel('NameMC').setURL(`https://www.namemc.com/${ign}`),
+        new MessageButton().setStyle('LINK').setLabel('Steal skin').setURL(`https://minecraft.net/profile/skin/remote?url=https://crafatar.com/skins/${uuid}`),
     );
     await interaction.reply({
       components: [row],

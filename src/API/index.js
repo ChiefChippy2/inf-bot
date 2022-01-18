@@ -40,3 +40,10 @@ export async function getMaps() {
   mapCache = [...maps];
   return maps;
 };
+
+export const getServerInfo = async () => await Cli.getServerInfo();
+/**
+ * Gets Player count for infections
+ * @return {number}
+ */
+export const getPlayerCount = async () => (await Cli.getGameCounts()).murderMystery.modes.murderInfection;
