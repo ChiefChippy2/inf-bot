@@ -35,8 +35,8 @@ export default {
     const losses = stats.playedGames - stats.wins;
     const survKills = rstats.kills_as_survivor_MURDER_INFECTION || 0;
     const kills = (rstats.kills_as_infected_MURDER_INFECTION || 0) + survKills;
-    const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0);
-    const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0);
+    const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0, rstats);
+    const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0, rstats);
     const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
 
     // lb shenanigans :
@@ -74,11 +74,11 @@ export default {
         .addField('Coins picked up', formatNumber(coins), true)
         .addField('Coins per game', formatNumber(divide(coins, stats.playedGames)), true)
 
-        .addField('Total survived time', formatTime(lst), true)
-        .addField('Longest survived time', formatTime(bst), true)
-        .addField('Average survival time', formatTime(divide(lst, stats.playedGames)), true)
+        .addField(`Total survived time ${lst.approximate ? ' (approx.)' : ''}`, formatTime(lst.value || lst), true)
+        .addField(`Longest survived time ${bst.approximate ? ' (approx.)' : ''}`, formatTime(bst.value || bst), true)
+        .addField(`Average survival time ${lst.approximate ? ' (Pre-defined value)' : ''}`, formatTime(divide(lst.value || lst, stats.playedGames)), true)
 
-        .addField('\u200B', '* - Survivor kills might be very inaccurate, please take with a grain of salt');
+        .addField('\u200B', '*Survivor kills leaderboard position might be very inaccurate, please take with a grain of salt');
     await interaction.reply({
       'content': `Here are the stats of ${formattedIgn}`,
       'embeds': [statsEmbed],

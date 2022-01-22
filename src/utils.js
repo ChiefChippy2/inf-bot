@@ -98,10 +98,27 @@ export function formatNumber(num) {
 }
 
 /**
- * @param {number} time Time
- * @return {number}
+ * Formats IGN
+ * @param {string} ign IGN
+ * @param {string} [rank='Default'] Rank
+ * @param {string} [guild] Guild tag if any
+ * @return {string}
  */
-export function fixTime(time) {
-  if (time < 0) time = 0;
+export function formatIGN(ign, rank='Default', guild) {
+  return `[${rank}] ${ign}${guild ? ` [${guild}]` : ''}`;
+}
+
+/**
+ * @param {number} time Time
+ * @param {Record<string, number>} stats Stats
+ * @return {number|Record<string, number|boolean>}
+ */
+export function fixTime(time, stats) {
+  if (time < 0) {
+    time = {
+      value: stats.games_MURDER_INFECTION * 90,
+      approximate: true,
+    };
+  } // 90 seconds seems to be a median survive time
   return time;
 }

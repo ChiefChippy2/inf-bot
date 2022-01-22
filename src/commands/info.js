@@ -15,6 +15,10 @@ export default {
    * @param {Interaction} interaction
    */
   'handler': async (interaction) => {
+    const invLink = interaction.client.generateInvite({
+      permissions: 103079528512n,
+      scopes: ['bot', 'applications.commands'],
+    });
     const userPing = Date.now() - interaction.createdTimestamp;
     const serverInfo = await getServerInfo();
     const pCount = await getPlayerCount();
@@ -26,6 +30,7 @@ export default {
     await interaction.reply({
       embeds: [
         new DefaultEmbed(interaction.guild?.me || interaction.client)
+            .setDescription('Latest Updates: Small patches for /stats and /who')
             .addField('Bot responded after: ', `${userPing} ms`, true)
             .addField('Bot\'s ping to discord', `${interaction.client.ws.ping} ms`, true)
             .addField('Bot\'s memory usage', `${memUsage.toFixed(2)} MB (approx.)`, true)
@@ -35,7 +40,7 @@ export default {
             .addField('Your estimated ping to hypixel', `${minEstPing} to ${maxEstPing} ms (approx.)`, true)
             .addField('Hypixel player count', `${serverInfo.players.online} / ${serverInfo.players.max}`)
             .addField('Infection player count', `${pCount}`, true)
-            .addField('Bot guild count (invite me)', `${interaction.client.guilds.cache.size} (approx.)`, true)
+            .addField('Bot guild count', `${interaction.client.guilds.cache.size} (approx.) [Invite me](${invLink})`, true)
             .addField('Bot user count', `${interaction.client.users.cache.size || 0} (even more approx.)`, true),
       ],
     });

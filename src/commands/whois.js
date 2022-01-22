@@ -2,6 +2,7 @@ import {MessageActionRow, MessageButton} from 'discord.js';
 import Har from 'hypixel-api-reborn';
 import {getStats} from '../API/index.js';
 import {DefaultEmbed} from '../constants.js';
+import {formatIGN, formatTime} from '../utils.js';
 const HyUtils = Har.Utils;
 
 /**
@@ -34,14 +35,16 @@ export default {
     }
     const ign = await HyUtils.toIGN(uuid);
     const imgUrl = `https://visage.surgeplay.com/full/512/${uuid}.png?tilt=0`;
-    const player = await getStats(uuid);
+    const player = await getStats(uuid, {guild: true});
     const sm = player.socialMedia;
+    const lastSeen = player.lastLogoutTimestamp ? `${formatTime((Date.now() - player.lastLogoutTimestamp) / 1000)} ago` : '[Status API disabled]';
     const embed = new DefaultEmbed(interaction.guild?.me || interaction.client.user)
         .setImage(imgUrl)
         .addField('IGN', ign)
+        .addField('IGN with rank and guild tag', formatIGN(player.nickname, player.rank, player.guild?.tag))
         .addField('UUID', `\`${uuid}\``)
-        .addField('Status', player.isOnline ? `Online, playing ${player.recentlyPlayedGame?.name || 'Unknown'}`: 'Offline')
-        .addField('Social Media', sm.map((sm)=>`${sm.name} : ${sm.link}`).join('\n'))
+        .addField('Status', player.isOnline ? `Online, playing ${player.recentlyPlayedGame?.name || 'Unknown'}`: `Offline, Last seen ${lastSeen}`)
+        .addField('Social Media', sm.map((sm)=>`${sm.name} : ${sm.link}`).join('\n') || 'NONE')
         .setDescription('Skin from [Surgeplay](https://visage.surgeplay.com/)');
     const row = new MessageActionRow().addComponents(
         new MessageButton().setStyle('LINK').setLabel('NameMC').setURL(`https://www.namemc.com/${ign}`),

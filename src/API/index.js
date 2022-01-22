@@ -10,10 +10,11 @@ const Cli = new Client(process.env.KEY, {
 /**
  * Get stats
  * @param {string} query Query
+ * @param {Record<string, any>} [options]
  * @return {Promise<Player>}
  */
-export async function getStats(query) {
-  return await Cli.getPlayer(query);
+export async function getStats(query, options) {
+  return await Cli.getPlayer(query, options);
 }
 
 
