@@ -86,18 +86,22 @@ client.on('interactionCreate', async (interaction) => {
     // await interaction.deferReply();
     await cmd[interaction.commandName]?.handler?.(interaction, interactionRegistry);
   } catch (e) {
-    if (e.message === Errors.PLAYER_DOES_NOT_EXIST) {
-      return await interaction.reply({
-        content: 'No player with given IGN',
+    try {
+      if (e.message === Errors.PLAYER_DOES_NOT_EXIST) {
+        return await interaction.reply({
+          content: 'No player with given IGN',
+          ephemeral: true,
+        });
+      }
+      // Other errors
+      console.error(e);
+      await interaction.reply({
+        content: 'An error happened whilst executing the interaction',
         ephemeral: true,
       });
+    } catch (e) {
+      console.error('Error happened whilst handling error : timeout?');
     }
-    // Other errors
-    console.error(e);
-    await interaction.reply({
-      content: 'An error happened whilst executing the interaction',
-      ephemeral: true,
-    });
   }
 });
 
