@@ -2,11 +2,9 @@
  * @typedef {import('discord.js').CommandInteraction} Interaction
  */
 
-import {getStats, getStatsRaw} from '../API/index.js';
-import Har from 'hypixel-api-reborn';
-import {DefaultEmbed} from '../constants.js';
-import {formatTime, formatNumber, fixTime} from '../utils.js';
-const divide = Har.Utils.divide;
+import {getStatsRaw} from '../API/index.js';
+import {DefaultEmbed, stats, statToValue} from '../constants.js';
+import {formatTime, formatNumber, zip, formatIGN, fixTime} from '../utils.js';
 
 export default {
   'name': 'statcompare',
@@ -30,53 +28,51 @@ export default {
     * @param {Interaction} interaction
     */
   'handler': async (interaction) => {
-    return await interaction.reply('SoonTM');
-    // @TODO
     const ign = interaction.options.get('ign1').value;
-    const allStats = await getStats(ign);
-    const rawStats = await getStatsRaw(ign);
-    const formattedIgn = `[${allStats.rank}] ${allStats.nickname}`;
-    const stats = allStats.stats.murdermystery.infection;
-    const rstats = rawStats?.player.stats.MurderMystery || {};
-    const losses = stats.playedGames - stats.wins;
-    const survKills = rstats.kills_as_survivor_MURDER_INFECTION || 0;
-    const kills = (rstats.kills_as_infected_MURDER_INFECTION || 0) + survKills;
-    const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0);
-    const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0);
-    const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
-    const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
-    statsEmbed
-        .setTitle('Stats')
-        .addField('Wins', formatNumber(stats.wins), true)
-        .addField('Losses', formatNumber(losses), true)
-        .addField('Total games', formatNumber(stats.playedGames), true)
-
-        .addField('Kills (total)', formatNumber(kills), true)
-        .addField('Bow Kills', formatNumber(survKills), true)
-        .addField('Infection Count', formatNumber(rstats.kills_as_infected_MURDER_INFECTION || 0), true)
-
-        .addField('Trap Kills', formatNumber(rstats.trap_kills_MURDER_INFECTION || 0), true)
-        .addField('Final Bow Kills', formatNumber(rstats.bow_kills_MURDER_INFECTION || 0), true)
-        .addField('(Final) Deaths', formatNumber(stats.deaths), true)
-
-        .addField('WLR', formatNumber(divide(stats.wins, losses)), true)
-        .addField('KDR', formatNumber(divide(kills, stats.deaths)), true)
-        .addField('FKDR', formatNumber(divide(rstats.bow_kills_MURDER_INFECTION, stats.deaths)), true)
-
-        .addField('Kills per game (avg.)', formatNumber(divide(kills, stats.playedGames)), true)
-        .addField('Final Bow Kills per game', formatNumber(divide(rstats.bow_kills_MURDER_INFECTION, stats.playedGames)), true)
-        .addField('Last one alive count', formatNumber(rstats.last_one_alive_MURDER_INFECTION || 0), true)
-
-        .addField('Bow kill to Infection ratio', survKills > 0 ? `1:${divide(rstats.kills_as_infected_MURDER_INFECTION || 0, survKills)}` : 'N/A', true)
-        .addField('Coins picked up', formatNumber(coins), true)
-        .addField('Coins per game', formatNumber(divide(coins, stats.playedGames)), true)
-
-        .addField('Total survived time', formatTime(lst), true)
-        .addField('Longest survived time', formatTime(bst), true)
-        .addField('Average survival time', formatTime(divide(lst, stats.playedGames)), true);
+    const ign2 = interaction.options.get('ign2').value;
+    if (ign === ign2) return await ineraction.reply('The IGNs should be different');
+    const [stat1, stat2] = await Promise.all([getStatsRaw(ign), getStatsRaw(ign2)]);
+    const statCol1 = statToValue.map((func)=>func(stat1?.player.stats.MurderMystery, ''));
+    const statCol2 = statToValue.map((func)=>func(stat2?.player.stats.MurderMystery, ''));
+    const zippedCol = zip(statCol1, statCol2);
+    const winnerArr = zippedCol.reduce((pV, cV)=>{
+      pV[cV[1] > cV[0] ? 1 : 0] += 1;
+      return pV;
+    }, [0, 0]);
+    let winner = '';
+    if (winnerArr[0] > winnerArr[1]) winner = formatIGN(stat1.nickname, stat1.rank);
+    else if (winnerArr[0] < winnerArr[1]) winner = formatIGN(stat2.nickname, stat2.rank);
+    else winner = '**IT\'S A TIE!**';
+    const embed = new DefaultEmbed(interaction.guild?.me || interaction.client.user)
+        .addField('Players compared : ', `${formatIGN(stat1.nickname, stat1.rank)} vs ${formatIGN(stat2.nickname, stat2.rank)}`)
+        .addFields(zippedCol.map(([stat1, stat2], i)=>{
+          if (stats[i].includes('time')) {
+            // Approximate time to make it shorter
+            stat1 = fixTime(stat1);
+            stat2 = fixTime(stat2);
+            let t1 = formatTime(stat1).replace(/^(\S+ \S+).+$/, '$1'); // replaces 2nd word and +
+            let t2 = formatTime(stat2).replace(/^(\S+ \S+).+$/, '$1'); // replaces 2nd word and +
+            if (stat1 > stat2) t1 = `**${t1}**`;
+            else if (stat1 < stat2) t2 = `**${t2}**`;
+            return {
+              name: stats[i],
+              value: `${t1} vs ${t2} (approx. time)`,
+              inline: true,
+            };
+          }
+          let t1 = formatNumber(stat1);
+          let t2 = formatNumber(stat2);
+          if (stat1 > stat2) t1 = `**${t1}**`;
+          else if (stat1 < stat2) t2 = `**${t2}**`;
+          return {
+            name: stats[i],
+            value: `${t1} vs ${t2}`,
+            inline: true,
+          };
+        }))
+        .addField('Winner (based on most categories) : ', winner);
     await interaction.reply({
-      'content': `Here are the stats of ${formattedIgn}`,
-      'embeds': [statsEmbed],
+      embeds: [embed],
     });
   },
 };

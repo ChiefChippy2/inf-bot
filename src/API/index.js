@@ -21,10 +21,12 @@ export async function getStats(query, options) {
 /**
  * Get stats
  * @param {string} query Query
- * @return {Promise<Record<string, any>>}
+ * @return {Promise<Player>}
  */
 export async function getStatsRaw(query) {
-  return await Cli.getPlayer(query, {raw: true});
+  const rStats = await Cli.getPlayer(query, {raw: true});
+  const stats = await Cli.getPlayer(query);
+  return {...rStats, ...stats};
 }
 
 let mapCache = [];

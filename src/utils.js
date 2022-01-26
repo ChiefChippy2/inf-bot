@@ -122,3 +122,17 @@ export function fixTime(time, stats) {
   } // 90 seconds seems to be a median survive time
   return time;
 }
+
+/**
+ * Zips arrays
+ * @param  {...any[]} arrays Arrays to zip
+ * @return {Array<any>[]}
+ */
+export function zip(...arrays) {
+  if (arrays.some((array) => !Array.isArray(array) || array.length !== arrays[0].length)) throw new Error('Bad args.');
+  const zippedArray = [];
+  for (let i = 0; i < arrays[0].length; i++ ) {
+    zippedArray.push(arrays.map((arr)=>arr[i]));
+  }
+  return zippedArray;
+}

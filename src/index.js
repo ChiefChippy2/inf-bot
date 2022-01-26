@@ -7,6 +7,10 @@ const Errors = Har.Errors;
 
 config();
 
+const DEBUG = process.argv.includes('--debug');
+
+if (DEBUG) console.log('Debug mode ON');
+
 const cmd = parse(await load());
 
 const client = new Client({intents: [Intents.FLAGS.GUILDS], presence: {
@@ -51,6 +55,7 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
+  if (DEBUG) console.log(interaction);
   // Don't bother responding to test
   if (process.env.ENV === 'PROD' && interaction.guildId === process.env.GUILD_ID && interaction.channelId === process.env.TEST_CHANNEL) return;
   // Similarly, DEV shouldn't respond to other global cmds
@@ -104,5 +109,8 @@ client.on('interactionCreate', async (interaction) => {
     }
   }
 });
-
+if (DEBUG) {
+  client.on('debug', console.log);
+  client.on('warn', console.log);
+}
 client.login(process.env.TOKEN);
