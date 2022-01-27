@@ -62,6 +62,7 @@ export default {
     else if (winnerArr[0] < winnerArr[1]) winner = formatIGN(stats2.nickname, stats2.rank);
     else winner = '**IT\'S A TIE!**';
     const embed = new DefaultEmbed(interaction.guild?.me || interaction.client.user)
+        .setTitle('Stat comparison')
         .addField('Players compared : ', `${formatIGN(stats1.nickname, stats1.rank)} vs ${formatIGN(stats2.nickname, stats2.rank)}`)
         .addFields(zippedCol.map(([stat1, stat2], i)=>{
           const label = ratio ? stats[ratioOnlyStats[i]] : stats[i];
