@@ -67,6 +67,9 @@ export const stats = [
   'Longest survival time',
   'Survival time per game',
 ];
+
+export const ratioOnlyStats = ['WLR', 'KDR', 'FKDR', 'Kills per game', 'Final Bow Kills per game'].map((name)=>stats.indexOf(name));
+
 const suffix = '_MURDER_INFECTION';
 
 // eslint-disable-next-line valid-jsdoc
