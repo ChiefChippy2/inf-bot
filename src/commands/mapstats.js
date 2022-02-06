@@ -65,6 +65,7 @@ export default {
         const newStatRow = statSelectionRow();
         registerInteractions(newStatRow.id, selectionHandler.bind(null, intaction));
         return await intaction.reply({
+          content: `Requested by ${intaction.user}`,
           embeds: [await generateEmbed(interaction, formattedIgn, stats, intaction?.values?.[0])],
           components: [newStatRow.row],
         });

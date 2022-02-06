@@ -60,8 +60,8 @@ export const stats = [
   'Last one alive count',
 
   'Infection per bow kill',
-  'Coins picked up',
-  'Coins per game',
+  'Gold picked up',
+  'Gold per game',
 
   'Total survival time',
   'Longest survival time',

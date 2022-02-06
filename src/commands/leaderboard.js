@@ -25,6 +25,11 @@ export default {
         },
       ],
     },
+    {
+      'type': 5,
+      'name': 'mobile',
+      'description': 'Use a more mobile-friendly format',
+    },
   ],
   /**
     * handler
@@ -35,12 +40,13 @@ export default {
      * @type {string}
      */
     const category = interaction.options.get('category').value;
+    const mobile = interaction.options.get('mobile')?.value ?? false;
     const lbData = await lb.getLB();
     const embeds = [];
     const statLb = lbData[category];
     const itemPer = Math.ceil(statLb.length/4);
     // eslint-disable-next-line max-len
-    const maxIgnLength = Math.max(...statLb.map((data)=>data.ign.length + (data.guildTag?.length || 0) + data.rank.length + 8));
+    const maxIgnLength = Math.max(...statLb.map((data)=>data.ign.length + (mobile ? 0 : data.guildTag?.length || 0) + data.rank.length + 6));
     let pos = 0;
     for (let i = 0; i < 4; i++) {
       const statsEmbed = new DefaultEmbed(interaction.guild?.me || interaction.client.user);
@@ -52,9 +58,16 @@ export default {
         const displayedLb = lbRange.slice(j*rowPer, (j+1)*rowPer);
         const formatted = displayedLb.map((data)=>{
           pos++;
+          if (!mobile) {
+            return [
+              `#${pos}`.padStart(5, ' '),
+              `[${data.rank}] ${data.ign} ${data.guildTag ? `[${data.guildTag}]` : ''}`.padEnd(maxIgnLength, ' '),
+              `${data[category]};`,
+            ].join(' ');
+          }
           return [
-            `#${pos}.`.padStart(5, ' '),
-            `[${data.rank}] ${data.ign} ${data.guildTag ? `[${data.guildTag}] ` : ''}:`.padEnd(maxIgnLength, ' '),
+            `#${pos}`.padStart(5, ' '),
+            `[${data.rank}] ${data.ign}`.padEnd(maxIgnLength, ' '),
             `${data[category]};`,
           ].join(' ');
         });

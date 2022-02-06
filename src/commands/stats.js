@@ -71,8 +71,8 @@ export default {
         .addField('Last one alive count', formatNumber(rstats.last_one_alive_MURDER_INFECTION || 0), true)
 
         .addField('Bow kill to Infection ratio', survKills > 0 ? `1:${divide(rstats.kills_as_infected_MURDER_INFECTION || 0, survKills)}` : 'N/A', true)
-        .addField('Coins picked up', formatNumber(coins), true)
-        .addField('Coins per game', formatNumber(divide(coins, stats.playedGames)), true)
+        .addField('Gold picked up', formatNumber(coins), true)
+        .addField('Gold per game', formatNumber(divide(coins, stats.playedGames)), true)
 
         .addField(`Total survived time ${lst.approximate ? ' (approx.)' : ''}`, formatTime(lst.value || lst), true)
         .addField(`Longest survived time ${bst.approximate ? ' (approx.)' : ''}`, formatTime(bst.value || bst), true)

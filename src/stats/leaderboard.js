@@ -58,6 +58,8 @@ export class Leaderboard {
     });
     lb.infectedKills.sort((b, a)=>a.infectedKills - b.infectedKills);
     lb.survivorKills.sort((b, a)=>a.survivorKills - b.survivorKills);
+    // Strip the last 20 places
+    lb.survivorKills.splice(80, 20);
     return lb;
   }
 
