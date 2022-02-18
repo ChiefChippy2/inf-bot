@@ -1,4 +1,6 @@
-import {Client} from 'hypixel-api-reborn';
+import har from 'hypixel-api-reborn';
+
+const {Client, Utils} = har;
 
 /**
  * @typedef {import('hypixel-api-reborn').Player} Player
@@ -17,6 +19,7 @@ export async function getStats(query, options) {
   return await Cli.getPlayer(query, options);
 }
 
+export const toUuid = Utils.toUuid;
 
 /**
  * Get stats

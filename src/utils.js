@@ -1,3 +1,5 @@
+import {parse} from 'node:path';
+
 /**
  * Wait
  * @param {number} timeout Timeout in ms
@@ -115,11 +117,10 @@ export function formatIGN(ign, rank='Default', guild) {
  */
 export function fixTime(time, stats) {
   if (time < 0) {
-    time = {
-      value: stats.games_MURDER_INFECTION * 90,
-      approximate: true,
-    };
-  } // 90 seconds seems to be a median survive time
+    time /= 1000;
+    time += 2**23;
+  };
+  console.log(time);
   return time;
 }
 
@@ -136,3 +137,5 @@ export function zip(...arrays) {
   }
   return zippedArray;
 }
+
+export const srcPath = parse(new URL(import.meta.url).pathname).dir;

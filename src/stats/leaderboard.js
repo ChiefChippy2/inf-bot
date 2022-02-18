@@ -11,7 +11,10 @@ export class Leaderboard {
    * @param {string} type
    */
   constructor(type) {
-    this.cache = {};
+    this.cache = {
+      infectedKills: [],
+      survivorKills: [],
+    };
     this.cacheUntil = 0;
     this.type = type;
   }
@@ -77,7 +80,7 @@ export class Leaderboard {
    * @return {Record<string, LeaderboardObject[]>}
    */
   async getLB() {
-    await this.updateLB();
+    await this.updateLB().catch(console.log);
     return this.cache;
   }
 }
