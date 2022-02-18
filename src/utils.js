@@ -118,7 +118,7 @@ export function formatIGN(ign, rank='Default', guild) {
 export function fixTime(time, stats) {
   if (time < 0) {
     time /= 1000;
-    time += 2**23;
+    time += 2**32;
   };
   console.log(time);
   return time;
