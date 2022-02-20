@@ -23,7 +23,7 @@ export async function authenticateLink(user, uuid) {
   if (!username) return {success: false, reason: 'No discord account linked with provided username'};
   const [name, tag] = username.split('#');
   if (name.trim() !== user.username || tag.trim() !== user.discriminator) return {success: false, reason: 'Linked discord account doesn\'t match!'};
-  if (!await addLinkedUser(BigInt(user.id), uuid, 1)) return {success: false, reason: 'Failed linking : a user is already linked with similar details'};
+  if (!await addLinkedUser(user.id.toString(), uuid, 1)) return {success: false, reason: 'Failed linking : a user is already linked with similar details'};
   return {success: true};
 }
 

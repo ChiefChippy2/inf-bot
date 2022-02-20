@@ -7,7 +7,7 @@ export const sequelize = new Sequelize(`sqlite:${srcPath}/../storage/player.db`,
 export class LinkedUser extends Model {}
 LinkedUser.init({
   discordId: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
