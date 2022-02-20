@@ -2,7 +2,7 @@
 import {Sequelize, Model, DataTypes} from 'sequelize';
 import {srcPath} from '../utils.js';
 
-export const sequelize = new Sequelize(`sqlite:${srcPath}/../storage/player.db`, {logging: process.env.ENV === 'DEV'});
+export const sequelize = new Sequelize(`sqlite:${srcPath}/../storage/player.db`, {logging: process.env.ENV === 'DEV' ? console.log: false});
 
 export class LinkedUser extends Model {}
 LinkedUser.init({
