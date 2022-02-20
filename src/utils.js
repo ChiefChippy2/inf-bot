@@ -107,7 +107,7 @@ export function formatNumber(num) {
  * @return {string}
  */
 export function formatIGN(ign, rank='Default', guild) {
-  return `[${rank}] ${ign}${guild ? ` [${guild}]` : ''}`;
+  return `[${rank}] ${ign.replace(/_/g, '\\_')}${guild ? ` [${guild}]` : ''}`;
 }
 
 /**

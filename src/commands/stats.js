@@ -5,7 +5,7 @@
 import {getStats, getStatsRaw} from '../API/index.js';
 import Har from 'hypixel-api-reborn';
 import {DefaultEmbed} from '../constants.js';
-import {formatTime, formatNumber, fixTime} from '../utils.js';
+import {formatTime, formatNumber, fixTime, formatIGN} from '../utils.js';
 import {lb} from '../stats/leaderboard.js';
 const divide = Har.Utils.divide;
 
@@ -29,7 +29,7 @@ export default {
     const ign = interaction.options.get('ign').value;
     const allStats = await getStats(ign);
     const rawStats = await getStatsRaw(ign);
-    const formattedIgn = `[${allStats.rank}] ${allStats.nickname}`;
+    const formattedIgn = formatIGN(allStats.nickname, allStats.rank);
     const stats = allStats.stats.murdermystery.infection;
     const rstats = rawStats?.player.stats.MurderMystery || {};
     const losses = stats.playedGames - stats.wins;

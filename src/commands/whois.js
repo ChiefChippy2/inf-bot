@@ -2,6 +2,7 @@ import {MessageActionRow, MessageButton} from 'discord.js';
 import Har from 'hypixel-api-reborn';
 import {getStats} from '../API/index.js';
 import {DefaultEmbed} from '../constants.js';
+import {getLinkedUserByUUID} from '../link/database.js';
 import {formatIGN, formatTime} from '../utils.js';
 const HyUtils = Har.Utils;
 
@@ -38,6 +39,7 @@ export default {
     const player = await getStats(uuid, {guild: true});
     const sm = player.socialMedia;
     const lastSeen = player.lastLogoutTimestamp ? `${formatTime((Date.now() - player.lastLogoutTimestamp) / 1000)} ago` : '[Status API disabled]';
+    const link = (await getLinkedUserByUUID(uuid))?.get?.('discordId');
     const embed = new DefaultEmbed(interaction.guild?.me || interaction.client.user)
         .setImage(imgUrl)
         .addField('IGN', ign)
@@ -45,6 +47,7 @@ export default {
         .addField('UUID', `\`${uuid}\``)
         .addField('Status', player.isOnline ? `Online, playing ${player.recentlyPlayedGame?.name || 'Unknown'}`: `Offline, Last seen ${lastSeen}`)
         .addField('Social Media', sm.map((sm)=>`${sm.name} : ${sm.link}`).join('\n') || 'NONE')
+        .addField('Linked Discord Account (if any)', `${link ? `<@${link}>` : 'Not linked... If this is you, do `/link` to link your account!'}`)
         .setDescription('Skin from [Surgeplay](https://visage.surgeplay.com/)');
     const row = new MessageActionRow().addComponents(
         new MessageButton().setStyle('LINK').setLabel('NameMC').setURL(`https://www.namemc.com/${ign}`),
