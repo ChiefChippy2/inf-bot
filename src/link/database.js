@@ -2,7 +2,7 @@ import {LinkedUser} from '../database/index.js';
 
 /**
  * Adds a linked user
- * @param {BigInt} id Discord ID
+ * @param {string} id Discord ID
  * @param {string} uuid String MC UUID
  * @param {number} method Link Method
  * @return {Boolean} Whether the user has been linked successfully
@@ -20,7 +20,7 @@ export async function addLinkedUser(id, uuid, method) {
 
 /**
  * Gets linked user by Discord ID
- * @param {BigInt} discordId Discord ID
+ * @param {string} discordId Discord ID
  * @return {LinkedUser|null} User, if found
  */
 export async function getLinkedUserById(discordId) {

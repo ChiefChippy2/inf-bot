@@ -139,3 +139,24 @@ export function zip(...arrays) {
 }
 
 export const srcPath = parse(new URL(import.meta.url).pathname).dir;
+
+/**
+ * @param {Record<string, number>} obj1 Object 1
+ * @param {Record<string, number>} obj2 Object 2, must be more recent than Object 1
+ * @param {Boolean} [safe=false] Loop through both objects' keys
+ * @return {Record<string, number>} newObj
+ */
+export function deltaJson(obj1, obj2, safe=false) {
+  const newObj = {};
+  for (const key in obj2) {
+    if (!Object.prototype.hasOwnProperty.call(obj2, key)) continue;
+    newObj[key] = Number(obj2[key]) - Number(obj1[key]) || 0;
+  }
+  if (!safe) return newObj;
+
+  for (const key in obj1) {
+    if (!Object.prototype.hasOwnProperty.call(obj1, key)) continue;
+    newObj[key] = Number(obj2[key]) - Number(obj1[key]) || 0;
+  }
+  return newObj;
+}
