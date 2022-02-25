@@ -10,7 +10,7 @@ import {LinkedUser} from '../database/index.js';
 export async function addLinkedUser(id, uuid, method) {
   try {
     await LinkedUser.create({
-      discordId: id, mcUuid: uuid, linkMethod: method, linkedAt: new Date(),
+      discordId: id, mcUuid: uuid, linkmethod: method, linkedAt: new Date(),
     });
     return true;
   } catch {
