@@ -7,6 +7,9 @@ const Errors = Har.Errors;
 
 config();
 
+// Dyn import
+const {updateLinkedUsersStats} = await import('./stats/dailystats.js');
+
 const DEBUG = process.argv.includes('--debug');
 
 if (DEBUG) console.log('Debug mode ON');
@@ -47,10 +50,11 @@ function cleanRegistry() {
   }
 }
 
-client.on('ready', () => {
+client.once('ready', () => {
   debug();
   setInterval(debug, 1000*60*5);
   setInterval(cleanRegistry, 1000*30);
+  setInterval(updateLinkedUsersStats, 1000*60*5);
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
