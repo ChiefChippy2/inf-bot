@@ -27,7 +27,7 @@ export default {
     const storedStats = await getUserStatsByUUID(linkedUser.get('mcUuid'));
     if (!storedStats || !storedStats.get('stats')) {
       return interaction.reply({
-        content: 'No stored stats is found. Please try again later (this might be because you linked your account recently.',
+        content: 'No stored stats is found. Please try again later (this might be because you linked your account recently).',
       });
     };
     const storedInfStats = JSON.parse(storedStats.get('stats'));
