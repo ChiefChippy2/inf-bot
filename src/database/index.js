@@ -50,5 +50,5 @@ UserStats.init({
 }, {sequelize});
 
 await sequelize.authenticate();
-await sequelize.sync({alter: true});
+await sequelize.sync();
 
