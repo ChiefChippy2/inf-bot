@@ -63,10 +63,12 @@ export async function updateLinkedUsersStats() {
   // Get count of users that want an immediate reset
 
   const {count, rows} = await LinkedUser.findAndCountAll({where: {updateDailyStatsTime: hr}});
-  if (count === 0) return; // Nothing to be done here
+  if (count === 0) return console.log('Nothing to update'); // Nothing to be done here
   const updateAmount = Math.ceil(count / 8); // Should be 12 cuz every 5 mins, but might as well do more than expected.
   const updates = rows
       .filter((x) => new Date(x.get('statsLastUpdated')).getTime() < curDate).slice(0, updateAmount)
       .map((user) => updateLinkUserStats(user));
+  console.log('Updating', updates.length);
   await Promise.allSettled(updates);
+  console.log('Done, updated', updates.length);
 }

@@ -9,6 +9,7 @@ import {addLinkedUser} from './database.js';
  * @typedef {Object} LinkStatus
  * @property {Boolean} success
  * @property {string} reason
+ * @typedef {import('../database/index.js').LinkedUser} LinkedUser
 */
 
 /**
@@ -27,3 +28,21 @@ export async function authenticateLink(user, uuid) {
   return {success: true};
 }
 
+/**
+ * @private
+ * Update a single Linked User's stored stats
+ * @param {LinkedUser} linkedUser
+ * @param {string} prefName name of config
+ * @param {*} prefVal value
+ * @return {Boolean} Whether the update succeeded
+ */
+export async function updateUserPrefs(linkedUser, prefName, prefVal) {
+  try {
+    await linkedUser.update({
+      [prefName]: prefVal,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

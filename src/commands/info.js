@@ -30,7 +30,7 @@ export default {
     await interaction.reply({
       embeds: [
         new DefaultEmbed(interaction.guild?.me || interaction.client)
-            .setDescription('Latest Updates: /statcompare + Stop "random" bot crashes')
+            .setDescription('Latest Updates: /dailystats and /link')
             .addField('Bot responded after: ', `${userPing} ms`, true)
             .addField('Bot\'s ping to discord', `${interaction.client.ws.ping} ms`, true)
             .addField('Bot\'s memory usage', `${memUsage.toFixed(2)} MB (approx.)`, true)

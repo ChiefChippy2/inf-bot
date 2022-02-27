@@ -155,3 +155,31 @@ export function statSelectionRow(id = randUUID()) {
   ]);
   return {row, id};
 }
+
+export const specialTimeZoneNames = {
+  '0': 'UTC/GMT',
+  '1': 'BST/CET',
+  '2': 'CEST/SAST',
+  '3': 'EEST',
+  '4': 'ADT/MSD',
+  '8': 'CST (China ST)/SGT',
+  '9': 'JST/KST',
+  '10': 'AEST',
+  '11': 'AEDT',
+  '-10': 'HST',
+  '-8': 'PT/PST',
+  '-7': 'MST/PDT',
+  '-6': 'CT/CST (Central US ST)',
+  '-5': 'CDT/EST',
+  '-4': 'AST',
+  '-3': 'ADT/ART',
+  '-2': 'BRST',
+};
+// Some timezones aren't named because I personally consider them to be too rare
+
+export const UTCtoTimestamp = Array(24).fill(1).map((_, index)=>({
+  hour: index,
+  timezone: index > 12 ? `${index - 24}` : `+${index}`,
+  discordFormat: `<t:${-index * 60 * 60}:t>`,
+  specialTimeZone: specialTimeZoneNames[(index > 12 ? index - 24 : index).toString()] || '',
+}));

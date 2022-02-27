@@ -3,27 +3,82 @@
  */
 
 import {getStatsRaw} from '../API/index.js';
-import {DefaultEmbed, stats, statToValue} from '../constants.js';
-import {formatTime, formatNumber, formatIGN, deltaJson} from '../utils.js';
+import {DefaultEmbed, stats, statToValue, UTCtoTimestamp} from '../constants.js';
+import {formatTime, formatNumber, formatIGN, deltaJson, randUUID} from '../utils.js';
 import {getLinkedUserById} from '../link/database.js';
 import {getUserStatsByUUID} from '../stats/dailystats.js';
+import {MessageActionRow, MessageSelectMenu} from 'discord.js';
+import {updateUserPrefs} from '../link/index.js';
 
 export default {
   'name': 'dailystats',
-  'description': 'Shows your daily stats (only for LINKED users)!',
-  'options': [],
+  'description': '[BETA] Shows your daily stats (only for LINKED users)!',
+  'options': [{
+    'type': 3,
+    'name': 'config',
+    'description': 'Configurations for Daily Stats',
+    'choices': [
+      {
+        'name': 'Refresh time - when daily stats will be reset',
+        'value': 'refresh_time',
+      },
+    ],
+  }],
   /**
     * handler
     * @param {Interaction} interaction
+    * @param {Function} intReg
     */
-  'handler': async (interaction) => {
+  'handler': async (interaction, intReg) => {
     const linkedUser = await getLinkedUserById(interaction.user.id);
     if (!linkedUser) {
       return interaction.reply({
         // eslint-disable-next-line max-len
-        content: `Your discord account isn't linked to a minecraft account. This is mandatory for daily stats to prevent storing excessive data.`,
+        content: `Your discord account isn't linked to a minecraft account. This is mandatory for daily stats to prevent storing excessive data.
+- Tip: to link your account, do \`/link ign\``,
       });
     };
+    if (interaction.options.get('config')?.value === 'refresh_time') {
+      const id = `tz_select${randUUID()}`;
+      interaction.reply({
+        ephemeral: true,
+        content: 'Please select the time slot that fits you the best',
+        embeds: [
+          new DefaultEmbed(interaction.guild?.me || interaction.client.user)
+              .setTitle('When do you want your stats to be reset?')
+              .setDescription('Depending on the number of linked users that wants to, your stats might take up to 1 hour to be reset.')
+              .addField('The midnights for each timezone corresponds to (for you): ', UTCtoTimestamp.map((data)=>`UTC ${data.timezone}: ${data.discordFormat}`).join('\n')),
+        ],
+        components: [new MessageActionRow().addComponents(new MessageSelectMenu()
+            .setCustomId(id)
+            .setMaxValues(1)
+            .setMinValues(1)
+            .setPlaceholder('Select a timeslot')
+            .addOptions(UTCtoTimestamp.map((data)=>({
+              label: `Midnight - UTC ${data.timezone} (${data.specialTimeZone})`,
+              value: data.hour.toString(),
+            }))))],
+      });
+      return intReg(id, async (interaction) => {
+        const val = interaction?.values?.[0];
+        const linkedUser = await getLinkedUserById(interaction.user.id);
+        if (await updateUserPrefs(linkedUser, 'updateDailyStatsTime', parseInt(val))) {
+          return interaction.reply({
+            content: 'Success!',
+            embeds: [],
+            components: [],
+            ephemeral: true,
+          });
+        } else {
+          return interaction.reply({
+            content: 'Something went wrong, try again later!',
+            embeds: [],
+            components: [],
+            ephemeral: true,
+          });
+        }
+      }, 60 * 10);
+    }
     const storedStats = await getUserStatsByUUID(linkedUser.get('mcUuid'));
     if (!storedStats || !storedStats.get('stats')) {
       return interaction.reply({

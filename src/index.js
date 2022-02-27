@@ -81,6 +81,7 @@ client.on('interactionCreate', async (interaction) => {
           ephemeral: true,
         });
       }
+      console.error(e);
     }
   }
 
