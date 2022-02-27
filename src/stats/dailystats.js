@@ -41,10 +41,16 @@ export async function getUserStatsByUUID(uuid) {
 export async function updateLinkUserStats(linkedUser) {
   const uuid = linkedUser.get('mcUuid');
   const stats = await getStatsRaw(uuid);
-  const mmStats = JSON.stringify(stats?.player.stats.MurderMystery || {});
+  const mmStats = stats?.player.stats.MurderMystery || {};
+  for (const key in mmStats) {
+    if (!Object.prototype.hasOwnProperty.call(mmStats, key)) continue;
+    if (key.endsWith('MURDER_INFECTION')) continue;
+    delete mmStats[key];
+  }
+  const finalMMStats = JSON.stringify(mmStats);
   try {
     await UserStats.upsert({
-      mcUuid: uuid, stats: mmStats, storeTime: new Date(),
+      mcUuid: uuid, stats: finalMMStats, storeTime: new Date(),
     });
     await linkedUser.update({'statsLastUpdated': new Date()});
     return true;
