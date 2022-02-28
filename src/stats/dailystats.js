@@ -68,7 +68,7 @@ export async function updateLinkedUsersStats() {
   const curDate = new Date().setMinutes(0);
   // Get count of users that want an immediate reset
 
-  const {count, rows} = await LinkedUser.findAndCountAll({where: {updateDailyStatsTime: hr}});
+  const {count, rows} = await LinkedUser.findAndCountAll({where: {updateDailyStatsTime: (24 - hr) % 24}}); // hot fix
   if (count === 0) return console.log('Nothing to update'); // Nothing to be done here
   const updateAmount = Math.ceil(count / 8); // Should be 12 cuz every 5 mins, but might as well do more than expected.
   const updates = rows
