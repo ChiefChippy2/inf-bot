@@ -50,6 +50,10 @@ export default {
     statsEmbed
         .setTitle('Stats')
 
+        .addField('Hypixel Level', `Level ${allStats.level} (${allStats.levelProgress.percent}% to next lvl)`, true)
+        .addField('Karma', `${allStats.karma} Karma`, true)
+        .addField('Achievement Points', `${allStats.achievementPoints} pts`, true)
+
         .addField('Wins', formatNumber(stats.wins), true)
         .addField('Losses', formatNumber(losses), true)
         .addField('Total games', formatNumber(stats.playedGames), true)
@@ -78,7 +82,8 @@ export default {
         .addField(`Longest survived time ${bst.approximate ? ' (approx.)' : ''}`, formatTime(bst.value || bst), true)
         .addField(`Average survival time ${lst.approximate ? ' (Pre-defined value)' : ''}`, formatTime(divide(lst.value || lst, stats.playedGames)), true)
 
-        .addField('\u200B', '*Survivor kills leaderboard position might be very inaccurate, please take with a grain of salt');
+        .addField('\u200B', '*Survivor kills leaderboard position might be very inaccurate, please take with a grain of salt')
+        .setThumbnail(`https://visage.surgeplay.com/head/${allStats.uuid}.png`);
     await interaction.reply({
       'content': `Here are the stats of ${formattedIgn}`,
       'embeds': [statsEmbed],
