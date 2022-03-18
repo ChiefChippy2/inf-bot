@@ -50,9 +50,9 @@ export default {
     statsEmbed
         .setTitle('Stats')
 
-        .addField('Hypixel Level', `Level ${allStats.level} (${allStats.levelProgress.percent}% to next lvl)`, true)
-        .addField('Karma', `${allStats.karma} Karma`, true)
-        .addField('Achievement Points', `${allStats.achievementPoints} pts`, true)
+        .addField('Hypixel Level', `Level ${allStats.level}`, true)
+        .addField('Karma', `${formatNumber(allStats.karma)} Karma`, true)
+        .addField('Achievement Points', `${formatNumber(allStats.achievementPoints)} pts`, true)
 
         .addField('Wins', formatNumber(stats.wins), true)
         .addField('Losses', formatNumber(losses), true)
