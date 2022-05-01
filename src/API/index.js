@@ -8,6 +8,7 @@ const {Client, Utils} = har;
 const Cli = new Client(process.env.KEY, {
   cache: true,
   cacheTime: 120,
+  rateLimit: 'AUTO',
 });
 /**
  * Get stats

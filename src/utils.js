@@ -160,3 +160,14 @@ export function deltaJson(obj1, obj2, safe=false) {
   }
   return newObj;
 }
+
+/**
+ * Returns numbers of days in a moonth
+ * @param {number} timestamp TS
+ * @return {number}
+ */
+export function monthDays(timestamp) {
+  const date = new Date(timestamp);
+  const monthDate = new Date(new Date(date.getUTCFullYear(), (date.getUTCMonth()+1)%12, 1, 0, 0, 0, 0).getTime() - 1);
+  return monthDate.getDate();
+}

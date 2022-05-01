@@ -36,8 +36,6 @@ UserStats.init({
   mcUuid: {
     type: DataTypes.UUIDV4,
     allowNull: false,
-    unique: true,
-    primaryKey: true,
   },
   stats: {
     type: DataTypes.STRING, // can be json
@@ -46,6 +44,16 @@ UserStats.init({
   storeTime: {
     type: DataTypes.DATE,
     allowNull: false,
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  computedUniqueKey: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true,
+    unique: true,
   },
 }, {sequelize});
 

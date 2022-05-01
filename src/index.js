@@ -8,7 +8,7 @@ const Errors = Har.Errors;
 config();
 
 // Dyn import
-const {updateLinkedUsersStats} = await import('./stats/dailystats.js');
+const {updateLinkedUsersStats} = await import('./stats/periodicstats.js');
 
 const DEBUG = process.argv.includes('--debug');
 

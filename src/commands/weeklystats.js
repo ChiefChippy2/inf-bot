@@ -5,15 +5,15 @@
 import {periodicStats} from './_basePeriodicStatsHandler.js';
 
 export default {
-  'name': 'dailystats',
-  'description': 'Shows your daily stats (only for LINKED users)!',
+  'name': 'weeklystats',
+  'description': '[BETA] Shows your weekly stats (only for LINKED users)!',
   'options': [],
   /**
     * handler
     * @param {Interaction} interaction
     */
   'handler': async (interaction) => {
-    return await periodicStats(interaction, 'DAILY');
+    return await periodicStats(interaction, 'WEEKLY');
   },
 };
 
