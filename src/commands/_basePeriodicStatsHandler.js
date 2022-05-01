@@ -22,7 +22,7 @@ export async function periodicStats(interaction, type) {
 - Tip: to link your account, do \`/link ign\``,
     });
   };
-  const storedStats = await getUserStatsByUUID(linkedUser.get('mcUuid'));
+  const storedStats = await getUserStatsByUUID(linkedUser.get('mcUuid'), type);
   if (!storedStats || !storedStats.get('stats')) {
     return interaction.reply({
       content: 'No stored stats is found. Please try again later (this might be because you linked your account recently).',
