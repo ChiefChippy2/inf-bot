@@ -72,7 +72,7 @@ export async function updateLinkedUsersStats() {
   console.log('Batch updating linked user stats...');
   const hr = new Date().getUTCHours();
   const curDate = new Date().setUTCMinutes(0);
-  const isWeekEnd = new Date().getUTCDay() === (hr >= 12 ? 6 : 0);
+  const isWeekEnd = new Date().getUTCDay() === (hr >= 12 ? 0 : 1);
   const isMonthEnd = new Date().getUTCDate() === (hr >= 12 ? monthDays(Date.now()-10000) : 0);
   // Get count of users that want an immediate reset
 
