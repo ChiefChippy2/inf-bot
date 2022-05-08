@@ -31,7 +31,7 @@ export async function periodicStats(interaction, type) {
   const storedInfStats = JSON.parse(storedStats.get('stats'));
   const currentStats = await getStatsRaw(linkedUser.get('mcUuid'));
   const curInfStats = currentStats?.player.stats.MurderMystery;
-  const lastUpdated = linkedUser.get('statsLastUpdated');
+  const lastUpdated = storedStats.get('storeTime');
   const lastReset = formatTime((Date.now() - lastUpdated) / 1000);
   const nextResetCatalog = {
     'DAILY': (lastUpdated - Date.now() + 1000 * 60 * 60 * 24)/1000,
