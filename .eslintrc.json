@@ -14,6 +14,7 @@
       "max-len": ["warn", {
         "ignoreStrings": true,
         "code": 120
-        }]
+        }],
+        "no-undef": "error"
     }
 }
