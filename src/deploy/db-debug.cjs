@@ -1,7 +1,5 @@
 /**
  * Load me into node REPL!
- * Copy and paste the following line
-const debugTools = await import('./src/deploy/db-debug.js');
  */
 
 
