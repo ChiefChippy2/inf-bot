@@ -21,7 +21,7 @@ export async function addLinkedUser(id, uuid, method) {
 /**
  * Gets linked user by Discord ID
  * @param {string} discordId Discord ID
- * @return {Promis<LinkedUser|null>} User, if found
+ * @return {Promise<LinkedUser|null>} User, if found
  */
 export async function getLinkedUserById(discordId) {
   const user = await LinkedUser.findOne({
