@@ -4,9 +4,10 @@ import {getStatFunc} from '../constants.js';
  * Calculates score
  * @param {Record<string, number|null>} stats Stats
  * @param {string} [map=''] Map if any
+ * @param {number} [multiplier=1.5] Multiplier for confidence level. Defaults at 1.5
  * @return {Score}
  */
-export function calcScore(stats, map) {
+export function calcScore(stats, map, multiplier=1.5) {
   if (map !== '') map = '_' +map;
   const KDR = getStatFunc('KDR')(stats, map);
   const WLR = getStatFunc('WLR')(stats, map);
@@ -34,7 +35,7 @@ export function calcScore(stats, map) {
   Final Score = skillScore * multipliers + grindScore
   */
 
-  const skillScore = Math.min(KDR ** 0.5, 5) + Math.min(WLR, 10) + KPG ** 2 + Math.log2(LOAC);
+  const skillScore = Math.min(KDR ** 0.5, 5) + Math.min(WLR, 10) + KPG ** 2 + Math.log2(LOAC || 1);
   const multipliers = Math.min(FBKG + 1, 4) * Math.min(FKDR ** 0.5, 5);
   const grindScore = Math.log2(games + 1) + Math.log2(kills + 1) * 2;
   const finalScore = skillScore * multipliers + grindScore;
@@ -44,7 +45,7 @@ export function calcScore(stats, map) {
     multipliers,
     finalScore,
     grindScore,
-    confidenceLevel: Math.min(10, games > 1 ? Math.log10(games)*1.5 : 0), // How confident the score is, 0 to 10
+    confidenceLevel: Math.min(10, games > 1 ? Math.log10(games)*multiplier : 0), // How confident the score is, 0 to 10
   };
 };
 
