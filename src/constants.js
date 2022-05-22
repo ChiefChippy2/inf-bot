@@ -183,3 +183,16 @@ export const UTCtoTimestamp = Array(24).fill(1).map((_, index)=>({
   discordFormat: `<t:${-index * 60 * 60}:t>`,
   specialTimeZone: specialTimeZoneNames[(index > 12 ? index - 24 : index).toString()] || '',
 }));
+
+export const scoreMultiplier = {
+  'DAILY': 3.6,
+  'WEEKLY': 2.5,
+  'MONTHLY': 2,
+};
+
+export const readable = {
+  MONTHLY: 'monthly',
+  WEEKLY: 'weekly',
+  all: 'all time',
+  DAILY: 'daily',
+};

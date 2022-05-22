@@ -41,7 +41,9 @@ export default {
             .addField('Hypixel player count', `${serverInfo.players.online} / ${serverInfo.players.max}`)
             .addField('Infection player count', `${pCount}`, true)
             .addField('Bot guild count', `${interaction.client.guilds.cache.size} (approx.) [Invite me](${invLink})`, true)
-            .addField('Bot user count', `${interaction.client.users.cache.size || 0} (even more approx.)`, true),
+            .addField('Bot user count', `${interaction.client.users.cache.size || 0} (even more approx.)`, true)
+            .addField('Links', `[Bot\'s GitHub Repo (might have some unpublished release :p)](${process.env.GITHUB_URL})
+[Official Infection Discord Server](${process.env.INF_SERVER_URL})`),
       ],
     });
   },
