@@ -44,7 +44,6 @@ export async function getPeriodicStats(linkedUser, type) {
  */
 export async function getPeriodicStatsDelta(linkedUser, type) {
   const storedInfStats = await getPeriodicStats(linkedUser, type);
-  const apiLikeStoredInfStats = JSON.parse(storedInfStats.get('stats'));
   if (!storedInfStats) {
     return {
       'error': true,
@@ -52,6 +51,7 @@ export async function getPeriodicStatsDelta(linkedUser, type) {
       'code': 0,
     };
   };
+  const apiLikeStoredInfStats = JSON.parse(storedInfStats.get('stats'));
   const currentStats = await getStatsRaw(linkedUser.get('mcUuid'));
   const curInfStats = currentStats?.player.stats.MurderMystery;
   if (!curInfStats || curInfStats.games_MURDER_INFECTION <= apiLikeStoredInfStats.games_MURDER_INFECTION) {

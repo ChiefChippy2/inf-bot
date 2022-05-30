@@ -162,7 +162,7 @@ export function deltaJson(obj1, obj2, safe=false) {
 }
 
 /**
- * Returns numbers of days in a moonth
+ * Returns numbers of days in a month
  * @param {number} timestamp TS
  * @return {number}
  */
