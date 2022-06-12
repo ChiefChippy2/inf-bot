@@ -73,7 +73,7 @@ export async function updateLinkedUsersStats() {
   const hr = new Date().getUTCHours();
   const curDate = new Date().setUTCMinutes(0);
   const isWeekEnd = new Date().getUTCDay() === (hr >= 12 ? 0 : 1);
-  const isMonthEnd = new Date().getUTCDate() === (hr >= 12 ? monthDays(Date.now()-10000) : 0);
+  const isMonthEnd = new Date().getUTCDate() === (hr >= 12 ? monthDays(Date.now()-10000) : 1);
   // Get count of users that want an immediate reset
 
   const {count, rows} = await LinkedUser.findAndCountAll({where: {updateDailyStatsTime: hr}});
