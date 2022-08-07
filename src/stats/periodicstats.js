@@ -1,3 +1,4 @@
+import {Op} from 'sequelize';
 import {getStatsRaw} from '../API/index.js';
 import {LinkedUser, UserStats} from '../database/index.js';
 import {monthDays} from '../utils.js';
@@ -76,7 +77,11 @@ export async function updateLinkedUsersStats() {
   const isMonthEnd = new Date().getUTCDate() === (hr >= 12 ? monthDays(Date.now()-10000) : 1);
   // Get count of users that want an immediate reset
 
-  const {count, rows} = await LinkedUser.findAndCountAll({where: {updateDailyStatsTime: hr}});
+  const {count, rows} = await LinkedUser.findAndCountAll({where: {
+    [Op.or]: {
+      updateDailyStatsTime: hr,
+      statsLastUpdated: {[Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 25)},
+    }}});
   if (count === 0) return console.log('Nothing to update'); // Nothing to be done here
   const updateAmount = Math.ceil(count / 8); // Should be 12 cuz every 5 mins, but might as well do more than expected.
   const updates = rows
