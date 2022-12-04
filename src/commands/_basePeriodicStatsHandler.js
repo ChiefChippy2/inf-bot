@@ -85,6 +85,10 @@ export async function periodicStats(interaction, type) {
     });
   };
   const storedStats = await getPeriodicStatsDelta(linkedUser, type);
+  const {databaseData, statImprovement, currentStats} = storedStats;
+  const lastUpdated = databaseData.get('storeTime');
+  const lastReset = formatTime((Date.now() - lastUpdated) / 1000);
+
   if (storedStats.error) {
     if (storedStats.code === 0) {
       return interaction.reply({
@@ -98,9 +102,7 @@ export async function periodicStats(interaction, type) {
       });
     };
   }
-  const {databaseData, statImprovement, currentStats} = storedStats;
-  const lastUpdated = databaseData.get('storeTime');
-  const lastReset = formatTime((Date.now() - lastUpdated) / 1000);
+
   const nextResetCatalog = {
     'DAILY': (lastUpdated - Date.now() + 1000 * 60 * 60 * 24)/1000,
     'WEEKLY': (lastUpdated - Date.now() + 1000 * 60 * 60 * 24 * 7)/1000,
