@@ -59,6 +59,7 @@ export async function getPeriodicStatsDelta(linkedUser, type) {
       'error': true,
       'reason': 'NO_GAMES_PLAYED',
       'code': 1,
+      'databaseData': storedInfStats,
     };
   }
   const statImprovement = deltaJson(apiLikeStoredInfStats, curInfStats);
