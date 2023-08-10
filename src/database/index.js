@@ -49,7 +49,7 @@ LinkedAlts.init({
   },
   nickname: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true, // TBD
   },
   linkmethod: {
     type: DataTypes.INTEGER,
