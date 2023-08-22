@@ -9,6 +9,7 @@ const Cli = new Client(process.env.KEY, {
   cache: true,
   cacheTime: 120,
   rateLimit: 'AUTO',
+  keyLimit: 60,
 });
 /**
  * Get stats
