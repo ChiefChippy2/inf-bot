@@ -22,9 +22,9 @@ export async function authenticateLink(user, uuid) {
   const stats = await getStats(uuid);
   const username = stats.socialMedia.find((x)=>x.id === 'DISCORD')?.link;
   if (!username) return {success: false, reason: 'No discord account linked with provided username'};
-  const [name, tag] = username.split('#');
+  const [name, tag] = username.toLowerCase().split('#');
   if (tag) console.log('Potential problem : user has discriminator');
-  if (name.trim() !== user.username) return {success: false, reason: 'Linked discord account doesn\'t match!'};
+  if (name.trim() !== user.username.toLowerCase()) return {success: false, reason: 'Linked discord account doesn\'t match!'};
   if (!await addLinkedUser(user.id.toString(), uuid, 1)) return {success: false, reason: 'Failed linking : a user is already linked with similar details'};
   return {success: true};
 }
