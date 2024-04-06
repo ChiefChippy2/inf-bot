@@ -36,6 +36,7 @@ export default {
     const survKills = rstats.kills_as_survivor_MURDER_INFECTION || 0;
     const kills = (rstats.kills_as_infected_MURDER_INFECTION || 0) + survKills;
     const lst = fixTime(rstats.total_time_survived_seconds_MURDER_INFECTION || 0, rstats);
+    const hst = Math.round(rstats.total_time_survived_seconds_MURDER_INFECTION / 3600);
     const bst = fixTime(rstats.longest_time_as_survivor_seconds_MURDER_INFECTION || 0, rstats);
     const coins = (rstats.coins_pickedup_MURDER_INFECTION || 0);
 
@@ -78,7 +79,7 @@ export default {
         .addField('Gold picked up', formatNumber(coins), true)
         .addField('Gold per game', formatNumber(divide(coins, stats.playedGames)), true)
 
-        .addField(`Total survived time ${lst.approximate ? ' (approx.)' : ''}`, formatTime(lst.value || lst), true)
+        .addField(`Total survived time ${lst.approximate ? ' (approx.)' : ''}`, `${hst.toLocaleString('en-US')} Hours\n${formatTime(lst.value || lst)}`, true)
         .addField(`Longest survived time ${bst.approximate ? ' (approx.)' : ''}`, formatTime(bst.value || bst), true)
         .addField(`Average survival time ${lst.approximate ? ' (Pre-defined value)' : ''}`, formatTime(divide(lst.value || lst, stats.playedGames)), true)
 
